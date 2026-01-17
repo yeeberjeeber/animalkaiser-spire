@@ -17,11 +17,44 @@ export const animals = [
 ]
 
 export const rarityPassives = {
-  Common: ["healOnLoss", "damageReduction"],
-  Bronze: ["smallHealOnWin"],
-  Silver: ["flatDamageBoost"],
-  Gold: ["critOnStreak", "execute"]
-};
+  Common: {
+    description: "Heal 15 HP at the start of each turn",
+    onTurnStart(player) {
+      player.currentHP = Math.min(
+        player.currentHP + 15,
+        player.maxHP
+      );
+    }
+  },
+  Bronze: {
+    description: "Damage rolls are more consistent",
+    onAttack(attacker, damage) {
+      const avg = (attacker.dmgMin + attacker.dmgMax) / 2;
+      return Math.round((damage + avg) / 2);
+    }
+  },
+  Silver: {
+    description: "10% chance to deal +5 damage",
+    onAttack(attacker, damage) {
+      if (Math.random() < 0.1) {
+        return damage + 5;
+      }
+      return damage;
+    }
+  },
+  Gold: {
+    description: "First attack each round deals +10 damage",
+    onFirstAttack(attacker, damage, gameState) {
+      if (!gameState.firstAttackUsed) {
+        gameState.firstAttackUsed = true;
+        return damage + 10;
+      }
+      console.log(damage);
+      return damage;
+    }
+  }
+}
+
 
 export const enemies = [
   { id: 1, name: "Wild Boar", maxHP: 100, dmgMin: 11, dmgMax: 15, difficulty: "Easy"},

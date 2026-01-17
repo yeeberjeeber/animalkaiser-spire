@@ -1,4 +1,4 @@
-.screen {
+section.screen:not(#battle-screen) {
   padding: 20px;
   text-align: center;
 }
@@ -11,6 +11,107 @@ button {
   margin: 5px;
   padding: 10px 20px;
   font-size: 16px;
+}
+
+#battle-screen h2 {
+  text-align: center;
+}
+
+.screen:not(.hidden) {
+  display: block;
+}
+
+.battle-container {
+  display: flex;
+  justify-content: space-between; /* left player, right enemy */
+  align-items: flex-start;
+  margin: 30px 50px;
+}
+
+.combatant {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+}
+
+.combatant.player {
+  align-items: flex-start; /* player content left-aligned */
+}
+
+.combatant.enemy {
+  align-items: flex-end; /* enemy content right-aligned */
+}
+
+.character-rect {
+  width: 150px;
+  height: 200px;
+  background-color: #555;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+
+.rps-container {
+  display: flex;
+  gap: 10px;
+}
+
+.rps-square {
+  width: 40px;
+  height: 40px;
+  background-color: #888;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.vs {
+  font-size: 32px;
+  font-weight: bold;
+  align-self: center;
+}
+
+.battle-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.battle-actions button {
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 2px solid #333;
+  background-color: #ccc;
+  transition: transform 0.2s ease;
+}
+
+.battle-actions button:hover {
+  transform: scale(1.05);
+}
+
+#battle-log {
+  margin-top: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  font-family: monospace;
+  background-color: #222;
+  color: #fff;
+  padding: 10px;
+  border-radius: 6px;
+  min-height: 60px;
 }
 
 #selection-controls {

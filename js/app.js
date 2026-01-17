@@ -6,6 +6,13 @@ import { animals } from "./data.js";
 /*-------------------------------- Constants --------------------------------*/
 
 const choices = ['rock', 'paper', 'scissors'];
+export const gameState = {
+  round: 1,
+  player: null,
+  enemy: null,
+  refreshUsed: false,
+  maxRounds: 6
+};
 
 
 /*---------------------------- Variables (state) ----------------------------*/

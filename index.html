@@ -41,6 +41,11 @@
         </div>
         <p id="player-hp-text">HP: 100 / 100</p>
         </div>
+        <div class="rps-container">
+            <div class="rps-square" id="player-rock">Rock</div>
+            <div class="rps-square" id="player-paper">Paper</div>
+            <div class="rps-square" id="player-scissors">Scissors</div>
+        </div>
 
         <!-- VS Text -->
         <div class="vs">VS</div>
@@ -53,15 +58,17 @@
         </div>
         <p id="enemy-hp-text">HP: 100 / 100</p>
         </div>
+        <div class="rps-container">
+            <div class="rps-square" id="enemy-rock">Rock</div>
+            <div class="rps-square" id="enemy-paper">Paper</div>
+            <div class="rps-square" id="enemy-scissors">Scissors</div>
+        </div>
     </div>
 
-    <!-- Battle Actions -->
+    <!-- Attack Button -->
     <div class="battle-actions">
-      <button data-choice="rock">Rock</button>
-      <button data-choice="paper">Paper</button>
-      <button data-choice="scissors">Scissors</button>
+        <button id="attack-btn">Attack</button>
     </div>
-
     <!-- Battle Log -->
     <div id="battle-log"></div>
     </section>

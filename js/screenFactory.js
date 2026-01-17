@@ -1,5 +1,6 @@
-import { animals } from "./animalData.js";
-import { startBattle, createPlayer } from "./combatFactory.js";
+import { animals } from "./data.js";
+import { startBattle, createPlayer, getRandomEnemyForRound } from "./combatFactory.js";
+import { gameState } from "./app.js";
 
 const screens = document.querySelectorAll(".screen");
 
@@ -37,7 +38,8 @@ export function renderAnimalChoices() {
     `;
 
     card.addEventListener("click", () => {
-      gameState.player = createPlayerAnimal(animal);
+      gameState.player = createPlayer(animal);
+      console.log(gameState.player)
       showScreen("battle-screen");
       startBattle();
     });
@@ -47,6 +49,8 @@ export function renderAnimalChoices() {
 }
 
 export function setupBattleScreen() {
+  gameState.enemy = getRandomEnemyForRound(gameState.round);
+
   const player = gameState.player;
   const enemy = gameState.enemy;
 
@@ -58,19 +62,23 @@ export function setupBattleScreen() {
   updateHP();
 }
 
-function updateHP() {
-  const playerHPPercent = (gameState.player.currentHP / gameState.player.maxHP) * 100;
-  const enemyHPPercent = (gameState.enemy.currentHP / gameState.enemy.maxHP) * 100;
+export function updateHP() {
+  const player = gameState.player;
+  const enemy = gameState.enemy;
 
-  // Update bars
+  // Make sure both exist
+  if (!player || !enemy) return;
+
+  const playerHPPercent = (player.currentHP / player.maxHP) * 100;
+  const enemyHPPercent = (enemy.currentHP / enemy.maxHP) * 100;
+
   document.getElementById("player-hp-bar").style.width = playerHPPercent + "%";
-  document.getElementById("enemy-hp-bar").style.width = enemyHPPercent + "%";
+  document.getElementById("player-hp-text").textContent =
+    `HP: ${player.currentHP} / ${player.maxHP}`;
 
-  // Update text
-  document.getElementById("player-hp-text").textContent = 
-    `HP: ${gameState.player.currentHP} / ${gameState.player.maxHP}`;
-  document.getElementById("enemy-hp-text").textContent = 
-    `HP: ${gameState.enemy.currentHP} / ${gameState.enemy.maxHP}`;
+  document.getElementById("enemy-hp-bar").style.width = enemyHPPercent + "%";
+  document.getElementById("enemy-hp-text").textContent =
+    `HP: ${enemy.currentHP} / ${enemy.maxHP}`;
 }
 
 export function renderPowerChoices() {
@@ -87,7 +95,7 @@ export function renderPowerChoices() {
   // ---- ANIMAL CARD CREATION ----
   choices.forEach(animal => {
     const card = document.createElement("div");
-    card.classList.add("power-card", animal.rarity.toLowerCase());
+    card.classList.add("power-card", animal.rarity);
     
     card.innerHTML = `
       <h3>${animal.name}</h3>
