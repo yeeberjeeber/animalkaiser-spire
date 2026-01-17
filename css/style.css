@@ -1,0 +1,52 @@
+.screen {
+  padding: 20px;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+#animal-options {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.animal-card {
+  border: 2px solid #333;
+  border-radius: 10px;
+  padding: 15px;
+  width: 150px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.animal-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+.animal-card.gold {
+  background-color: gold;
+  color: black;
+}
+
+.animal-card.silver {
+  background-color: silver;
+  color: black;
+}
+
+.animal-card.bronze {
+  background-color: #cd7f32;
+  color: white;
+}

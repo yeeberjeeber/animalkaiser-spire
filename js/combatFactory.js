@@ -1,17 +1,20 @@
-import { animals, rarityPassives, enemies } from './animal.js';
+//Function js file
+
+import { animals, rarityPassives, enemies } from './animalData.js';
+
+
+/* GAMEPLAY FUNCTIONS */
 
 //Rolling damage each turn
 function rollDamage(attacker) {
-  return Math.floor(Math.random() * (attacker.dmgMax - attacker.dmgMin + 1)) + attacker.dmgMin;
-}
+  if (Math.random() < 0.1) {
+    return attacker.dmgMax; // crit hit
+  }
 
-export function createPlayer(animal) {
-    return {
-        ...animal,
-        currentHP: animals.maxHP,
-        passives: rarityPassives[animals.rarity],
-        enhancements: []
-    };
+  const roll = (Math.random() + Math.random()) / 2;
+  return Math.floor(
+    roll * (attacker.dmgMax - attacker.dmgMin + 1)
+  ) + attacker.dmgMin;
 }
 
 //Creating Player Animal from selection
@@ -49,3 +52,6 @@ export function attack(attacker, defender) {
   defender.currentHP -= damage;
   console.log(`${attacker.name} hits ${defender.name} for ${damage} damage!`);
 }
+
+
+
