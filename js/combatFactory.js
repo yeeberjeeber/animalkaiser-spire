@@ -1,6 +1,7 @@
 //Function js file
 
-import { animals, rarityPassives, enemies } from './animalData.js';
+import { animals, rarityPassives, enemies } from './data.js';
+import { setupBattleScreen } from './screenFactory.js';
 
 
 /* GAMEPLAY FUNCTIONS */
@@ -28,7 +29,7 @@ export function createPlayer(animal) {
 }
 
 //Creating the enemy for each round
-export function getRandomEnemyForRound(round) {
+function getRandomEnemyForRound(round) {
   const difficulty = getDifficultyForRound(round);
 
   // Filter enemies by difficulty
@@ -53,5 +54,24 @@ export function attack(attacker, defender) {
   console.log(`${attacker.name} hits ${defender.name} for ${damage} damage!`);
 }
 
+//Starting the Battle
+export function startBattle() {
+  // Check for player
+  if (!gameState.player) return console.error("No player selected!");
+  
+  // Picking a random enemy
+  gameState.enemy = getRandomEnemyForRound(gameState.round || 1);
+  gameState.enemy.currentHP = gameState.enemy.maxHP; // full HP
 
+  setupBattleScreen();
+
+  const attackBtn = document.getElementById("attack-btn");
+  const specialBtn = document.getElementById("special-btn");
+
+  attackBtn.onclick = () => playerAttack();
+  specialBtn.onclick = () => playerSpecial();
+
+  // Optional: clear battle log
+  document.getElementById("battle-log").textContent = "";
+}
 

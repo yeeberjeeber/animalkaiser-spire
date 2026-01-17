@@ -21,22 +21,49 @@
         <header>
             <h2>Choose Your Fighter</h2>
             <div id="animal-options"></div>
+            <div id="selection-control">
+            <button id="reset-btn" class="animal-selection">Cancel</button>
+            <button id="generate-btn" class="animal-selection">Refresh</button>
+            </div>
         </header>
     </section>
 
     <!-- BATTLE SCREEN -->
     <section id="battle-screen" class="screen hidden">
-    <h2>Battle</h2>
+    <h2>Battle!</h2>
 
-    <div id="player-info"></div>
-    <div id="enemy-info"></div>
+    <div class="battle-container">
+        <!-- PLAYER -->
+        <div class="combatant" id="player-container">
+        <h3 id="player-name">Player</h3>
+        <div class="hp-bar-container">
+            <div class="hp-bar" id="player-hp-bar"></div>
+        </div>
+        <p id="player-hp-text">HP: 100 / 100</p>
+        </div>
 
-    <div id="rps-buttons">
+        <!-- VS Text -->
+        <div class="vs">VS</div>
+
+        <!-- ENEMY -->
+        <div class="combatant" id="enemy-container">
+        <h3 id="enemy-name">Enemy</h3>
+        <div class="hp-bar-container">
+            <div class="hp-bar" id="enemy-hp-bar"></div>
+        </div>
+        <p id="enemy-hp-text">HP: 100 / 100</p>
+        </div>
+    </div>
+
+    <!-- Battle Actions -->
+    <div class="battle-actions">
       <button data-choice="rock">Rock</button>
       <button data-choice="paper">Paper</button>
       <button data-choice="scissors">Scissors</button>
     </div>
-    <p id="battle-log"></p>
+
+    <!-- Battle Log -->
+    <div id="battle-log"></div>
     </section>
 
     <!-- POWER SELECTION SCREEN -->

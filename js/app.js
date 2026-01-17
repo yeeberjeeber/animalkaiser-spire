@@ -1,8 +1,6 @@
 /*-------------------------------- Imports --------------------------------*/
-console.log("App.js loaded");
-import { showScreen } from "./ui.js";
-import { renderAnimalChoices } from "./screenFactory.js";
-import { animals } from "./animalData.js"; 
+import { showScreen, renderAnimalChoices } from "./screenFactory.js";
+import { animals } from "./data.js"; 
 
 
 /*-------------------------------- Constants --------------------------------*/
@@ -15,6 +13,7 @@ const choices = ['rock', 'paper', 'scissors'];
 let playerChoice;
 let computerChoice; 
 let msg;
+let refreshUsed;
 
 /*------------------------ Cached Element References ------------------------*/
 
@@ -27,7 +26,22 @@ let msg;
 /*----------------------------- Event Listeners -----------------------------*/
 
 document.getElementById("start-btn").addEventListener("click", () => {
-  console.log("JS loaded");
   showScreen("animal-selection-screen");
   renderAnimalChoices();
+});
+
+document.getElementById("reset-btn").addEventListener("click", () => {
+  showScreen("start-screen");
+  refreshUsed = false;
+  document.getElementById("generate-btn").disabled = false;
+});
+
+document.getElementById("generate-btn").addEventListener("click", () => {
+  if (refreshUsed) {
+    return;
+  }
+
+  refreshUsed = true;
+  renderAnimalChoices();
+  document.getElementById("generate-btn").disabled = true;
 });
