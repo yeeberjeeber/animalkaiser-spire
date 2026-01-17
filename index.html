@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/style.css">
+  <script defer src="./js/app.js"></script>
+  <title>Animal Spire</title>
+</head>
+<body>
+    <!-- START SCREEN -->
+    <section id="start-screen" class="screen">
+        <header>
+            <h1>Animal Spire</h1>
+            <button id="start">Start Game</button>
+        </header>
+    </section>
+
+    <!-- ANIMAL SELECTION SCREEN -->
+    <section id="animal-selection-screen" class="screen hidden">
+        <header>
+            <h2>Choose Your Fighter</h2>
+            <div id="animal-options"></div>
+        </header>
+    </section>
+
+    <!-- BATTLE SCREEN -->
+    <section id="battle-screen" class="screen hidden">
+    <h2>Battle</h2>
+
+    <div id="player-info"></div>
+    <div id="enemy-info"></div>
+
+    <div id="rps-buttons">
+      <button data-choice="rock">Rock</button>
+      <button data-choice="paper">Paper</button>
+      <button data-choice="scissors">Scissors</button>
+    </div>
+    <p id="battle-log"></p>
+    </section>
+
+    <!-- POWER SELECTION SCREEN -->
+    <section id="power-selection-screen" class="screen hidden">
+        <header>
+            <h2>Select Your Reward</h2>
+            <div id="power-options"></div>
+        </header>
+    </section>
+
+    <!-- END SCREEN -->
+    <section id="end-screen" class="screen hidden">
+        <h2 id="end-title"></h2>
+        <button id="restart-btn">Play Again</button>
+        <button id="cancel-btn">Home</button>
+    </section>
+</body>
+</html>
