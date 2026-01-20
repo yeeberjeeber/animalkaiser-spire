@@ -1,5 +1,5 @@
-import { animals } from "./data.js";
-import { startBattle, createPlayer, getRandomEnemyForRound } from "./combatFactory.js";
+import { animals, powerCards } from "./data.js";
+import { startBattle, createPlayer, getRandomEnemyForRound, endRound } from "./combatFactory.js";
 import { gameState } from "./app.js";
 
 const screens = document.querySelectorAll(".screen");
@@ -30,6 +30,7 @@ export function renderAnimalChoices() {
     const card = document.createElement("div");
     card.classList.add("animal-card", animal.rarity.toLowerCase());
     
+    //populating the card
     card.innerHTML = `
       <h3>${animal.name}</h3>
       <p>HP: ${animal.maxHP}</p>
@@ -85,29 +86,30 @@ export function renderPowerChoices() {
   const container = document.getElementById("power-options");
   container.innerHTML = ""; // Clear previous cards if any
 
-  // Randomly pick 3 animals
-  const choices = [...animals]
-    .sort(() => Math.random() - 0.5) // shuffle
-    .slice(0, 5);
+  const choices = [...powerCards]
+    .slice(0, 2);
 
-  console.log("Animal choices:", choices); // for debugging
+  console.log("Power choices:", choices); // for debugging
 
-  // ---- ANIMAL CARD CREATION ----
-  choices.forEach(animal => {
+  // ---- POWER CARD CREATION ----
+  choices.forEach(power => {
     const card = document.createElement("div");
-    card.classList.add("power-card", animal.rarity);
+    card.classList.add("power-card", power.type);
     
     card.innerHTML = `
-      <h3>${animal.name}</h3>
-      <p>HP: ${animal.maxHP}</p>
-      <p>Damage: ${animal.dmgMin}-${animal.dmgMax}</p>
-      <p>Rarity: ${animal.rarity}</p>
+      <h3>${power.name}</h3>
+      <p>Description: ${power.description}</p>
+      <p>Type: ${power.type}</p>
     `;
 
     card.addEventListener("click", () => {
-      gameState.player = createPlayerAnimal(animal);
+      gameState.playerPower = power;
+
+      gameState.player.activePowers = gameState.player.activePowers || [];
+      gameState.player.activePowers.push(power);
+
       showScreen("battle-screen");
-      startBattle();
+      endRound();
     });
 
     container.appendChild(card);

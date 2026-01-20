@@ -55,6 +55,28 @@ export const rarityPassives = {
   }
 }
 
+export const powerCards = [
+  {
+    id: 1,
+    name: "Increase Damage",
+    description: "Increases damage by 5",
+    type: "attack",
+    effect: (player, enemy, gameState) => {
+      player.nextAttackBonus = 5;
+      console.log(`${player.name} activates Fury Strike! +5 damage on next attack`);
+    }
+  },
+  {
+    id: 2,
+    name: "Healing Wind",
+    description: "Heals HP by 30 points",
+    type: "heal",
+    effect: (player) => {
+      player.currentHP = Math.min(player.currentHP + 20, player.maxHP);
+    }
+  }
+]
+
 
 export const enemies = [
   { id: 1, name: "Wild Boar", maxHP: 100, dmgMin: 11, dmgMax: 15, difficulty: "Easy"},

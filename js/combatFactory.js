@@ -1,9 +1,8 @@
 //Function js file
 
 import { animals, rarityPassives, enemies } from './data.js';
-import { setupBattleScreen, updateHP, showScreen } from './screenFactory.js';
+import { setupBattleScreen, updateHP, showScreen, renderPowerChoices } from './screenFactory.js';
 import { gameState, choices } from "./app.js";
-import { applyPassive } from "./passiveEngine.js";
 
 /* GAMEPLAY FUNCTIONS */
 
@@ -23,7 +22,7 @@ function rollDamage(attacker) {
   return damage;
 } 
 
-//Rock Paper Scissors rolling functions
+/* ROCK PAPER SCISSORS FUNCTIONS */
 function rollRPS() {
   return choices[Math.floor(Math.random() * choices.length)];
 } 
@@ -52,25 +51,35 @@ function resolveRPS(player, enemy) {
   return "lose";
 }
 
-//Creating Player Animal from selection
+/* CREATE PLAYER FUNCTION */
 export function createPlayer(animal) {
     return {
       ...animal,
       currentHP: animals.maxHP,
-      passives: rarityPassives[animals.rarity],
+      passives: rarityPassives[animals.rarity], //lookup to get passive effects
       enhancements: []
     };
 }
 
+
+/* TURN BASED FUNCTIONS */
 function onTurnStart() {
   applyPassive(gameState.player, "onTurnStart");
-  applyPassive(gameState.enemy, "onTurnStart");
 
   updateHP();
 }
 
 function startRound() {
   gameState.firstAttackUsed = false;
+
+   // Apply stored heal from power card
+  if (gameState.player.nextTurnHeal) {
+    gameState.player.currentHP = Math.min(
+      gameState.player.currentHP + gameState.player.nextTurnHeal,
+      gameState.player.maxHP
+    );
+    console.log(`${gameState.player.name} heals ${gameState.player.nextTurnHeal} HP from Healing Aura!`);
+  }
 }
 
 function getDifficultyForRound(round) {
@@ -104,15 +113,21 @@ export function endTurn() {
   gameState.turn++;
   // proceed to next turn
 
+  gameState.playerRPS = null;
+  gameState.enemyRPS = null;
+  updateRPSUI();
+
   if(gameState.currentTurn === "player"){
     gameState.currentTurn = "enemy";
+    console.log("Enemy's turn")
   } else {
     gameState.currentTurn = "player";
     onTurnStart();
   }
 
   if (gameState.currentTurn === "enemy") {
-  setTimeout(enemyAttack, 700);
+  console.log("This is the enemy's turn to attack.")
+  enemyAttack();
   }
 
   return;
@@ -123,6 +138,8 @@ export function endRound() {
   // proceed to next battle or end game if round exceeds max
 
   gameState.turn = 1;
+  gameState.playerRPS = null;
+  gameState.enemyRPS = null;
 
   startRound();
 
@@ -160,32 +177,51 @@ function gameOver() {
   showScreen("start-screen");
 }
 
+
+/* ATTACK FUNCTIONS */
+//Helper function
+function applyPassive(entity, hook, value = null, context = {}) {
+  //To check if gameState.player has passives (it should)
+  if (!entity || !entity.passives) return value;
+
+ //Getting the function for the specific hook e.g. onAttack, onFirstAttack
+  const fn = entity.passives[hook];
+  if (!fn) return value;
+
+  //Calling functon in rarityPassives
+  return fn(entity, value, context) ?? value;
+}
+
 //Enemy attack calculation
 function enemyAttack() {
   gameState.enemyRPS = rollRPS();
   gameState.playerRPS = rollRPS();
 
-  updateRPSUI();
+  setTimeout(() => {
+    updateRPSUI();
 
-  const outcome = resolveRPS(
-    gameState.enemyRPS,
-    gameState.playerRPS
-  );
+    const outcome = resolveRPS(
+      gameState.enemyRPS,
+      gameState.playerRPS
+    );
 
-  if(outcome === "win"){
-    const damage = rollDamage(gameState.enemy);
-    gameState.player.currentHP -= damage;
-    if (gameState.player.currentHP < 0) gameState.player.currentHP = 0;
+    if(outcome === "win"){
+      const damage = rollDamage(gameState.enemy);
+      gameState.player.currentHP -= damage;
+      if (gameState.player.currentHP < 0) gameState.player.currentHP = 0;
 
-    console.log(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
-    updateHP();
+      console.log(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
+      updateHP();
 
-    if (gameState.player.currentHP <= 0) {
-      console.log(`${gameState.player.name} is defeated!`);
-      setTimeout(gameOver, 500);
-      return;
+      if (gameState.player.currentHP <= 0) {
+        console.log(`${gameState.player.name} is defeated!`);
+        setTimeout(gameOver, 500);
+        return;
+      }
+
+      endTurn();
     }
-  }
+  }, 600);
 }
 
 //Player attack calculation
@@ -210,6 +246,18 @@ export function playerAttack() {
     // Gold passive
     damage = applyPassive(gameState.player, "onFirstAttack", damage, gameState);
 
+    //Apply power card
+    if (gameState.playerPower?.effect) {
+      gameState.playerPower.effect(gameState.player, gameState.enemy, gameState);
+
+      updateHP();
+    }
+
+    // Apply any bonus stored by the power
+    if (gameState.player.nextAttackBonus) {
+      damage += gameState.player.nextAttackBonus;
+    }
+
     gameState.enemy.currentHP -= damage;
     if (gameState.enemy.currentHP < 0) gameState.enemy.currentHP = 0;
 
@@ -218,8 +266,8 @@ export function playerAttack() {
 
     if (gameState.enemy.currentHP <= 0) {
       console.log(`${gameState.enemy.name} is defeated!`);
-      setTimeout(endTurn, 500);
-      setTimeout(endRound, 500);
+      showScreen("power-selection-screen");
+      renderPowerChoices();
       return;
     }
 
@@ -233,7 +281,8 @@ export function playerAttack() {
   
 }
 
-//Starting the Battle
+
+/* START COMBAT FUNCTION */
 export function startBattle() {
   // Check for player
   if (!gameState.player) return console.error("No player selected!");
