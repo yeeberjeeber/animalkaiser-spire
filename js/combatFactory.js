@@ -2,7 +2,7 @@
 
 import { animals, rarityPassives, enemies } from './data.js';
 import { setupBattleScreen, updateHP, showScreen } from './screenFactory.js';
-import { gameState } from "./app.js";
+import { gameState, choices } from "./app.js";
 import { applyPassive } from "./passiveEngine.js";
 
 /* GAMEPLAY FUNCTIONS */
@@ -22,6 +22,35 @@ function rollDamage(attacker) {
 
   return damage;
 } 
+
+//Rock Paper Scissors rolling functions
+function rollRPS() {
+  return choices[Math.floor(Math.random() * choices.length)];
+} 
+
+function updateRPSUI() {
+  document.querySelectorAll(".rps-square").forEach(el => {
+    el.classList.remove("selected");
+
+    if (el.id === `player-${gameState.playerRPS}`) {
+      el.classList.add("selected");
+    }
+
+    if (el.id === `enemy-${gameState.enemyRPS}`) {
+      el.classList.add("selected");
+    }
+  });
+}
+
+function resolveRPS(player, enemy) {
+  if (player === enemy) return "draw";
+  if (
+    (player === "rock" && enemy === "scissors") ||
+    (player === "paper" && enemy === "rock") ||
+    (player === "scissors" && enemy === "paper")
+  ) return "win";
+  return "lose";
+}
 
 //Creating Player Animal from selection
 export function createPlayer(animal) {
@@ -71,9 +100,29 @@ export function getRandomEnemyForRound(round) {
   return enemy;
 }
 
+export function endTurn() {
+  gameState.turn++;
+  // proceed to next turn
+
+  if(gameState.currentTurn === "player"){
+    gameState.currentTurn = "enemy";
+  } else {
+    gameState.currentTurn = "player";
+    onTurnStart();
+  }
+
+  if (gameState.currentTurn === "enemy") {
+  setTimeout(enemyAttack, 700);
+  }
+
+  return;
+}
+
 export function endRound() {
   gameState.round++;
   // proceed to next battle or end game if round exceeds max
+
+  gameState.turn = 1;
 
   startRound();
 
@@ -101,6 +150,11 @@ function gameOver() {
   gameState.player = null;
   gameState.enemy = null;
   gameState.firstAttackUsed = false;
+  gameState.refreshUsed = false;
+  gameState.currentTurn = "player";
+  gameState.playerRPS = null;
+  gameState.enemyRPS = null;
+
 
   // Show home screen
   showScreen("start-screen");
@@ -108,47 +162,76 @@ function gameOver() {
 
 //Enemy attack calculation
 function enemyAttack() {
-  const damage = rollDamage(gameState.enemy);
-  gameState.player.currentHP -= damage;
-  if (gameState.player.currentHP < 0) gameState.player.currentHP = 0;
+  gameState.enemyRPS = rollRPS();
+  gameState.playerRPS = rollRPS();
 
-  console.log(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
-  updateHP();
+  updateRPSUI();
 
-  if (gameState.player.currentHP <= 0) {
-    console.log(`${gameState.player.name} is defeated!`);
-    setTimeout(gameOver, 500);
-    return;
+  const outcome = resolveRPS(
+    gameState.enemyRPS,
+    gameState.playerRPS
+  );
+
+  if(outcome === "win"){
+    const damage = rollDamage(gameState.enemy);
+    gameState.player.currentHP -= damage;
+    if (gameState.player.currentHP < 0) gameState.player.currentHP = 0;
+
+    console.log(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
+    updateHP();
+
+    if (gameState.player.currentHP <= 0) {
+      console.log(`${gameState.player.name} is defeated!`);
+      setTimeout(gameOver, 500);
+      return;
+    }
   }
 }
 
 //Player attack calculation
-function playerAttack() {
-  let damage = rollDamage(gameState.player);
+export function playerAttack() {
+  gameState.playerRPS = rollRPS();
+  gameState.enemyRPS = rollRPS();
+
+  updateRPSUI();
+
+  console.log(gameState.playerRPS);
+  console.log(gameState.enemyRPS);
+
+  const outcome = resolveRPS(gameState.playerRPS, gameState.enemyRPS);
+  console.log(outcome);
+
+  if (outcome === "win") {
+    let damage = rollDamage(gameState.player);
 
    // Bronze passive
-  damage = applyPassive(gameState.player, "onAttack", damage);
+    damage = applyPassive(gameState.player, "onAttack", damage);
 
-  // Gold passive
-  damage = applyPassive(gameState.player, "onFirstAttack", damage, gameState);
+    // Gold passive
+    damage = applyPassive(gameState.player, "onFirstAttack", damage, gameState);
 
-  gameState.enemy.currentHP -= damage;
-  if (gameState.enemy.currentHP < 0) gameState.enemy.currentHP = 0;
+    gameState.enemy.currentHP -= damage;
+    if (gameState.enemy.currentHP < 0) gameState.enemy.currentHP = 0;
 
-  console.log(`${gameState.player.name} hits ${gameState.enemy.name} for ${damage} damage!`);
-  updateHP();
+    console.log(`${gameState.player.name} hits ${gameState.enemy.name} for ${damage} damage!`);
+    updateHP();
 
-  if (gameState.enemy.currentHP <= 0) {
-    console.log(`${gameState.enemy.name} is defeated!`);
-    setTimeout(endRound, 500);
-    return;
+    if (gameState.enemy.currentHP <= 0) {
+      console.log(`${gameState.enemy.name} is defeated!`);
+      setTimeout(endTurn, 500);
+      setTimeout(endRound, 500);
+      return;
+    }
+
+    endTurn();
+
+  } else {
+
+    endTurn();
+
   }
-
-  // Enemy counterattack
-  setTimeout(enemyAttack, 500);
+  
 }
-
-
 
 //Starting the Battle
 export function startBattle() {
@@ -164,11 +247,7 @@ export function startBattle() {
 
   setupBattleScreen();
 
-  const attackBtn = document.getElementById("attack-btn");
-
-  attackBtn.onclick = () => playerAttack();
-
-  // Optional: clear battle log
+  //Clear battle log
   document.getElementById("battle-log").textContent = "";
 
   onTurnStart();

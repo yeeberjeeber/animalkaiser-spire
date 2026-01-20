@@ -1,17 +1,23 @@
 /*-------------------------------- Imports --------------------------------*/
 import { showScreen, renderAnimalChoices } from "./screenFactory.js";
+import { playerAttack } from "./combatFactory.js";
 import { animals } from "./data.js"; 
 
 
 /*-------------------------------- Constants --------------------------------*/
 
-const choices = ['rock', 'paper', 'scissors'];
+export const choices = ['rock', 'paper', 'scissors'];
 export const gameState = {
   round: 1,
+  turn: 1,
   player: null,
   enemy: null,
+  firstAttackUsed: false,
   refreshUsed: false,
-  maxRounds: 6
+  maxRounds: 6,
+  currentTurn: "player",
+  playerRPS: null,
+  enemyRPS: null,
 };
 
 
@@ -51,4 +57,8 @@ document.getElementById("generate-btn").addEventListener("click", () => {
   refreshUsed = true;
   renderAnimalChoices();
   document.getElementById("generate-btn").disabled = true;
+});
+
+document.getElementById("attack-btn").addEventListener("click", () => {
+  playerAttack();
 });

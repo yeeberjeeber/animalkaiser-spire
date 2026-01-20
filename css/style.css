@@ -74,6 +74,12 @@ button {
   border-radius: 4px;
 }
 
+.rps-square.selected {
+  border-color: gold;
+  background: rgba(255, 215, 0, 0.2);
+  transform: scale(1.05);
+}
+
 .vs {
   font-size: 32px;
   font-weight: bold;
