@@ -1,4 +1,4 @@
-import { addBattleLog } from "./screenFactory";
+import { addBattleLog } from "./screenFactory.js";
 
 export const animals = [
     {id: 1, name: "Lion", maxHP: 120, dmgMin: 22, dmgMax: 25, rarity: "Gold"},
