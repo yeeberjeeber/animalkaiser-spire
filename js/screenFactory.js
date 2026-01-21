@@ -1,5 +1,6 @@
 import { animals, powerCards } from "./data.js";
-import { startBattle, createPlayer, getRandomEnemyForRound, endRound } from "./combatFactory.js";
+import { startBattle, createPlayer} from "./combatFactory.js";
+import { getRandomEnemyForRound, endRound } from "./turnFactory.js";
 import { gameState } from "./app.js";
 
 const screens = document.querySelectorAll(".screen");
@@ -14,6 +15,7 @@ export function showScreen(screenId) {
 
   document.getElementById(screenId).classList.remove("hidden");
 }
+
 
 //Generating 3 Animal cards to choose
 export function renderAnimalChoices() {
@@ -49,6 +51,7 @@ export function renderAnimalChoices() {
   });
 }
 
+
 export function setupBattleScreen() {
   gameState.enemy = getRandomEnemyForRound(gameState.round);
 
@@ -62,6 +65,7 @@ export function setupBattleScreen() {
   // Initialize HP bars
   updateHP();
 }
+
 
 export function updateHP() {
   const player = gameState.player;
@@ -82,9 +86,10 @@ export function updateHP() {
     `HP: ${enemy.currentHP} / ${enemy.maxHP}`;
 }
 
+
 export function renderPowerChoices() {
   const container = document.getElementById("power-options");
-  container.innerHTML = ""; // Clear previous cards if any
+  container.innerHTML = ""; // Clear previous cards
 
   const choices = [...powerCards]
     .slice(0, 2);
@@ -115,6 +120,7 @@ export function renderPowerChoices() {
     container.appendChild(card);
   });
 }
+
 
 export function addBattleLog(message) {
   const log = document.getElementById("battle-log");
