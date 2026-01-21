@@ -1,3 +1,5 @@
+import { addBattleLog } from "./screenFactory";
+
 export const animals = [
     {id: 1, name: "Lion", maxHP: 120, dmgMin: 22, dmgMax: 25, rarity: "Gold"},
     {id: 2, name: "Bald Eagle", maxHP: 90, dmgMin: 23, dmgMax: 30, rarity: "Gold"},
@@ -61,18 +63,18 @@ export const powerCards = [
     name: "Increase Damage",
     description: "Increases damage by 5",
     type: "attack",
-    effect: (player, enemy, gameState) => {
-      player.nextAttackBonus = 5;
-      console.log(`${player.name} activates Fury Strike! +5 damage on next attack`);
+    onAttack(player, damage) {
+      return damage + 5;
     }
   },
   {
     id: 2,
     name: "Healing Wind",
-    description: "Heals HP by 30 points",
+    description: "Heals HP by 20 points",
     type: "heal",
-    effect: (player) => {
+    onRoundStart(player) {
       player.currentHP = Math.min(player.currentHP + 20, player.maxHP);
+      addBattleLog("Healing Wind heals 20 HP!");
     }
   }
 ]

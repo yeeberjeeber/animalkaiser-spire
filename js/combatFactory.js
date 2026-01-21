@@ -1,7 +1,7 @@
 //Function js file
 
 import { animals, rarityPassives, enemies } from './data.js';
-import { setupBattleScreen, updateHP, showScreen, renderPowerChoices } from './screenFactory.js';
+import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog } from './screenFactory.js';
 import { gameState, choices } from "./app.js";
 
 /* GAMEPLAY FUNCTIONS */
@@ -27,10 +27,13 @@ function rollRPS() {
   return choices[Math.floor(Math.random() * choices.length)];
 } 
 
+//Highlight the selected box
 function updateRPSUI() {
+  //Checks each square under rps-square class
   document.querySelectorAll(".rps-square").forEach(el => {
     el.classList.remove("selected");
 
+    //Adds a selected to the class once checked for selection match
     if (el.id === `player-${gameState.playerRPS}`) {
       el.classList.add("selected");
     }
@@ -55,8 +58,8 @@ function resolveRPS(player, enemy) {
 export function createPlayer(animal) {
     return {
       ...animal,
-      currentHP: animals.maxHP,
-      passives: rarityPassives[animals.rarity], //lookup to get passive effects
+      currentHP: animal.maxHP,
+      passives: rarityPassives[animal.rarity], //lookup to get passive effects
       enhancements: []
     };
 }
@@ -64,22 +67,29 @@ export function createPlayer(animal) {
 
 /* TURN BASED FUNCTIONS */
 function onTurnStart() {
-  applyPassive(gameState.player, "onTurnStart");
+  //Heal 15 HP Passive for Common
+  const passive = applyPassive(gameState.player, "onTurnStart");
+  console.log(passive);
 
+  if (passive === true) {
+    addBattleLog("Player heals 15 HP!");
+  }
+  
   updateHP();
 }
 
 function startRound() {
   gameState.firstAttackUsed = false;
 
-   // Apply stored heal from power card
-  if (gameState.player.nextTurnHeal) {
-    gameState.player.currentHP = Math.min(
-      gameState.player.currentHP + gameState.player.nextTurnHeal,
-      gameState.player.maxHP
-    );
-    console.log(`${gameState.player.name} heals ${gameState.player.nextTurnHeal} HP from Healing Aura!`);
+  //Apply power if any
+  const power = applyPowers(gameState.player, "onRoundStart")
+  console.log(power);
+
+  if (power === true) {
+    addBattleLog("Healing power applied!");
   }
+  
+  updateHP();
 }
 
 function getDifficultyForRound(round) {
@@ -119,14 +129,14 @@ export function endTurn() {
 
   if(gameState.currentTurn === "player"){
     gameState.currentTurn = "enemy";
-    console.log("Enemy's turn")
+    addBattleLog("Enemy's turn");
   } else {
     gameState.currentTurn = "player";
     onTurnStart();
   }
 
   if (gameState.currentTurn === "enemy") {
-  console.log("This is the enemy's turn to attack.")
+  setTimeout(addBattleLog("This is the enemy's turn to attack."), 500);
   enemyAttack();
   }
 
@@ -184,12 +194,28 @@ function applyPassive(entity, hook, value = null, context = {}) {
   //To check if gameState.player has passives (it should)
   if (!entity || !entity.passives) return value;
 
- //Getting the function for the specific hook e.g. onAttack, onFirstAttack
-  const fn = entity.passives[hook];
-  if (!fn) return value;
+ //Get the function for the specific hook e.g. onAttack, onFirstAttack
+  const func = entity.passives[hook];
+  if (!func) return value;
 
   //Calling functon in rarityPassives
-  return fn(entity, value, context) ?? value;
+  return func(entity, value, context) ?? value;
+}
+
+//Power card function
+function applyPowers(entity, hook, value = null, context = {}) {
+  if (!entity?.activePowers) return value;
+
+  let result = value;
+
+  for (const power of entity.activePowers) {
+    const fn = power[hook];
+    if (typeof fn === "function") {
+      result = fn(entity, result, context) ?? result;
+    }
+  }
+
+  return result;
 }
 
 //Enemy attack calculation
@@ -200,21 +226,23 @@ function enemyAttack() {
   setTimeout(() => {
     updateRPSUI();
 
-    const outcome = resolveRPS(
-      gameState.enemyRPS,
-      gameState.playerRPS
-    );
+    console.log(gameState.playerRPS);
+    console.log(gameState.enemyRPS);
+
+    const outcome = resolveRPS(gameState.enemyRPS, gameState.playerRPS);
+
+    addBattleLog(`Enemy ${outcome}`);
 
     if(outcome === "win"){
       const damage = rollDamage(gameState.enemy);
       gameState.player.currentHP -= damage;
       if (gameState.player.currentHP < 0) gameState.player.currentHP = 0;
 
-      console.log(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
+      addBattleLog(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
       updateHP();
 
       if (gameState.player.currentHP <= 0) {
-        console.log(`${gameState.player.name} is defeated!`);
+        addBattleLog(`${gameState.player.name} is defeated!`);
         setTimeout(gameOver, 500);
         return;
       }
@@ -235,7 +263,7 @@ export function playerAttack() {
   console.log(gameState.enemyRPS);
 
   const outcome = resolveRPS(gameState.playerRPS, gameState.enemyRPS);
-  console.log(outcome);
+  addBattleLog(`Player ${outcome}`);
 
   if (outcome === "win") {
     let damage = rollDamage(gameState.player);
@@ -246,32 +274,23 @@ export function playerAttack() {
     // Gold passive
     damage = applyPassive(gameState.player, "onFirstAttack", damage, gameState);
 
-    //Apply power card
-    if (gameState.playerPower?.effect) {
-      gameState.playerPower.effect(gameState.player, gameState.enemy, gameState);
-
-      updateHP();
-    }
-
-    // Apply any bonus stored by the power
-    if (gameState.player.nextAttackBonus) {
-      damage += gameState.player.nextAttackBonus;
-    }
+    //Apply damage power if any
+    damage = applyPowers(gameState.player, "onAttack", damage);
 
     gameState.enemy.currentHP -= damage;
     if (gameState.enemy.currentHP < 0) gameState.enemy.currentHP = 0;
 
-    console.log(`${gameState.player.name} hits ${gameState.enemy.name} for ${damage} damage!`);
+    addBattleLog(`${gameState.player.name} hits ${gameState.enemy.name} for ${damage} damage!`);
     updateHP();
 
+    endTurn();
+
     if (gameState.enemy.currentHP <= 0) {
-      console.log(`${gameState.enemy.name} is defeated!`);
-      showScreen("power-selection-screen");
+      addBattleLog(`${gameState.enemy.name} is defeated!`);
+      setTimeout(showScreen("power-selection-screen"), 500);
       renderPowerChoices();
       return;
     }
-
-    endTurn();
 
   } else {
 

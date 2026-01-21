@@ -116,3 +116,17 @@ export function renderPowerChoices() {
   });
 }
 
+export function addBattleLog(message) {
+  const log = document.getElementById("battle-log");
+  if (!log) return;
+
+  // Create a new line
+  const entry = document.createElement("div");
+  entry.textContent = message;
+
+  // Append to log
+  log.appendChild(entry);
+
+  // Auto-scroll to bottom
+  log.scrollTop = log.scrollHeight;
+}

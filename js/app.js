@@ -1,8 +1,6 @@
 /*-------------------------------- Imports --------------------------------*/
 import { showScreen, renderAnimalChoices } from "./screenFactory.js";
 import { playerAttack } from "./combatFactory.js";
-import { animals } from "./data.js"; 
-
 
 /*-------------------------------- Constants --------------------------------*/
 
@@ -18,23 +16,12 @@ export const gameState = {
   currentTurn: "player",
   playerRPS: null,
   enemyRPS: null,
+  activePowers: []
 };
-
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-let playerChoice;
-let computerChoice; 
-let msg;
 let refreshUsed;
-
-/*------------------------ Cached Element References ------------------------*/
-
-
-
-/*-------------------------------- Functions --------------------------------*/
-
-
 
 /*----------------------------- Event Listeners -----------------------------*/
 
