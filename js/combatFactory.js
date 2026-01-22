@@ -24,7 +24,7 @@ function rollDamage(attacker) {
 } 
 
 /* ROCK PAPER SCISSORS FUNCTIONS */
-function rollRPS() {
+function rollEnemyRPS() {
   return choices[Math.floor(Math.random() * choices.length)];
 } 
 
@@ -95,51 +95,62 @@ export function applyPowers(entity, hook, value = null, context = {}) {
   return result;
 }
 
-//Enemy attack calculation
+// //Enemy attack calculation
 export function enemyAttack() {
-  gameState.enemyRPS = rollRPS();
-  gameState.playerRPS = rollRPS();
+  gameState.enemyRPS = rollEnemyRPS();
 
-  setTimeout(() => {
-    updateRPSUI();
-
-    console.log(gameState.playerRPS);
-    console.log(gameState.enemyRPS);
-
-    const outcome = resolveRPS(gameState.enemyRPS, gameState.playerRPS);
-
-    addBattleLog(`Enemy ${outcome}`);
-
-    if(outcome === "win"){
-      const damage = rollDamage(gameState.enemy);
-      gameState.player.currentHP -= damage;
-      if (gameState.player.currentHP < 0) gameState.player.currentHP = 0;
-
-      addBattleLog(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
-      updateHP();
-
-      if (gameState.player.currentHP <= 0) {
-        addBattleLog(`${gameState.player.name} is defeated!`);
-        setTimeout(gameOver, 500);
-        return;
-      }
-
-      endTurn();
-    }
-  }, 600);
+  console.log(gameState.enemyRPS);
 }
 
-//Player attack calculation
-export function playerAttack() {
-  gameState.playerRPS = rollRPS();
-  gameState.enemyRPS = rollRPS();
+export function playerDefend(event) {
+  if (gameState.currentTurn !== "enemy") return;
+
+  const playerChoice = event.target.id.replace("player-", "");
+
+  gameState.playerRPS = playerChoice;
 
   updateRPSUI();
 
-  console.log(gameState.playerRPS);
+  const outcome = resolveRPS(gameState.enemyRPS, playerChoice);
+
+  addBattleLog(`Enemy ${outcome}`);
+
+  if(outcome === "win"){
+    const damage = rollDamage(gameState.enemy);
+    gameState.player.currentHP -= damage;
+    if (gameState.player.currentHP < 0) gameState.player.currentHP = 0;
+
+    addBattleLog(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
+    updateHP();
+
+    if (gameState.player.currentHP <= 0) {
+      addBattleLog(`${gameState.player.name} is defeated!`);
+      setTimeout(gameOver, 500);
+      return;
+    }
+
+    endTurn();
+  } else {
+
+    endTurn();
+
+  }
+
+}
+
+//Player attack calculation
+export function playerAttack(event) {
+
+  const playerChoice = event.target.id.replace("player-", "");
+  gameState.playerRPS = playerChoice;
+  gameState.enemyRPS = rollEnemyRPS();
+
+  updateRPSUI();
+
+  console.log(playerChoice);
   console.log(gameState.enemyRPS);
 
-  const outcome = resolveRPS(gameState.playerRPS, gameState.enemyRPS);
+  const outcome = resolveRPS(playerChoice, gameState.enemyRPS);
   addBattleLog(`Player ${outcome}`);
 
   if (outcome === "win") {
@@ -160,21 +171,35 @@ export function playerAttack() {
     addBattleLog(`${gameState.player.name} hits ${gameState.enemy.name} for ${damage} damage!`);
     updateHP();
 
-    endTurn();
-
     if (gameState.enemy.currentHP <= 0) {
       addBattleLog(`${gameState.enemy.name} is defeated!`);
-      setTimeout(showScreen("power-selection-screen"), 500);
+      setTimeout(() => {
+        showScreen("power-selection-screen");
+      }, 500);
       renderPowerChoices();
       return;
     }
 
-  } else {
+    endTurn();
+
+  } else  {
 
     endTurn();
 
   }
   
+}
+
+//Attacking and Defending
+export function onPlayerRPSClick(event) {
+  if (!event.target.classList.contains("rps-square")) return;
+
+  if (gameState.currentTurn === "player") {
+    playerAttack(event);
+  } 
+  else if (gameState.currentTurn === "enemy") {
+    playerDefend(event);
+  }
 }
 
 
@@ -194,6 +219,8 @@ export function startBattle() {
 
   //Clear battle log
   document.getElementById("battle-log").textContent = "";
+
+  addBattleLog(`Turn: ${gameState.turn}`);
 
   onTurnStart();
   startRound();

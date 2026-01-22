@@ -3,89 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.14/lottie.min.js"></script>
   <link rel="stylesheet" href="./css/style.css">
+  <script src="./js/animation.js" type="module" defer></script>
   <script type="module" defer src="./js/app.js"></script>
   <title>Animal Spire</title>
 </head>
 <body>
     <!-- START SCREEN -->
-    <section id="start-screen" class="screen">
-        <header>
-            <h1>Animal Spire</h1>
-            <button id="start-btn">Start Game</button>
+    <section id="start-screen" class="screen text-center py-5">
+        <div id="lottie-bg"></div>
+
+        <!-- UI -->
+        <header class="text-center text-white relative z-10">
+            <h1 class="text-4xl font-bold mb-4">Animal Spire</h1>
+            <button id="start-btn" class="px-6 py-3 bg-green-500 rounded-lg hover:bg-green-600">Start Game</button>
         </header>
     </section>
 
     <!-- ANIMAL SELECTION SCREEN -->
-    <section id="animal-selection-screen" class="screen hidden">
-        <header>
+    <section id="animal-selection-screen" class="screen d-none py-4">
+        <header class="text-center mb-4">
             <h2>Choose Your Fighter</h2>
-            <div id="animal-options"></div>
-            <div id="selection-control">
-            <button id="reset-btn" class="animal-selection">Cancel</button>
-            <button id="generate-btn" class="animal-selection">Refresh</button>
-            </div>
         </header>
+
+        <!-- Animal cards container -->
+        <div id="animal-options" class="d-flex justify-content-center gap-3 flex-wrap">
+            <!-- Cards will be injected here via JS -->
+        </div>
+
+        <!-- Buttons below the cards -->
+        <div id="selection-control" class="d-flex justify-content-center gap-4 mt-4">
+            <button id="reset-btn" class="btn btn-danger btn-lg">Cancel</button>
+            <button id="generate-btn" class="btn btn-primary btn-lg">Refresh</button>
+        </div>
     </section>
 
     <!-- BATTLE SCREEN -->
-    <section id="battle-screen" class="screen hidden">
-    <h2>Battle!</h2>
+    <section id="battle-screen" class="screen d-none">
+    <div class="container py-4">
 
-    <div class="battle-container">
+        <h2 class="text-center mb-4">Battle!</h2>
+
+        <div class="row justify-content-center align-items-center battle-container">
+
         <!-- PLAYER -->
-        <div class="combatant" id="player-container">
-        <h3 id="player-name">Player</h3>
-        <div class="hp-bar-container">
-            <div class="hp-bar" id="player-hp-bar"></div>
-        </div>
-        <p id="player-hp-text">HP: 100 / 100</p>
-        </div>
-        <div class="rps-container">
-            <div class="rps-square" id="player-rock">🪨</div>
-            <div class="rps-square" id="player-paper">📄</div>
-            <div class="rps-square" id="player-scissors">✂️</div>
+        <div class="col-md-4 text-center combatant" id="player-container">
+            <h3 id="player-name">Player</h3>
+            <div class="progress mb-2">
+            <div id="player-hp-bar" class="progress-bar bg-success" role="progressbar" style="width: 100%;"></div>
+            </div>
+            <p id="player-hp-text">HP: 100 / 100</p>
+
+            <div class="d-flex justify-content-center rps-container gap-2">
+            <div class="rps-square btn btn-outline-primary" id="player-rock">🪨</div>
+            <div class="rps-square btn btn-outline-primary" id="player-paper">📄</div>
+            <div class="rps-square btn btn-outline-primary" id="player-scissors">✂️</div>
+            </div>
         </div>
 
-        <!-- VS Text -->
-        <div class="vs">VS</div>
+        <!-- VS -->
+        <div class="col-md-1 text-center">
+            <h3>VS</h3>
+        </div>
 
         <!-- ENEMY -->
-        <div class="combatant" id="enemy-container">
-        <h3 id="enemy-name">Enemy</h3>
-        <div class="hp-bar-container">
-            <div class="hp-bar" id="enemy-hp-bar"></div>
-        </div>
-        <p id="enemy-hp-text">HP: 100 / 100</p>
-        </div>
-        <div class="rps-container">
-            <div class="rps-square" id="enemy-rock">🪨</div>
-            <div class="rps-square" id="enemy-paper">📄</div>
-            <div class="rps-square" id="enemy-scissors">✂️</div>
-        </div>
-    </div>
+        <div class="col-md-4 text-center combatant" id="enemy-container">
+            <h3 id="enemy-name">Enemy</h3>
+            <div class="progress mb-2">
+            <div id="enemy-hp-bar" class="progress-bar bg-danger" role="progressbar" style="width: 100%;"></div>
+            </div>
+            <p id="enemy-hp-text">HP: 100 / 100</p>
 
-    <!-- Attack Button -->
-    <div class="battle-actions">
-        <button id="attack-btn">Attack</button>
+            <div class="d-flex justify-content-center rps-container gap-2">
+            <div class="rps-square btn btn-outline-danger" id="enemy-rock">🪨</div>
+            <div class="rps-square btn btn-outline-danger" id="enemy-paper">📄</div>
+            <div class="rps-square btn btn-outline-danger" id="enemy-scissors">✂️</div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Battle Log -->
+        <div id="battle-log" class="mt-3 border p-2 bg-light rounded" style="min-height: 100px;"></div>
+
     </div>
-    <!-- Battle Log -->
-    <div id="battle-log"></div>
     </section>
 
     <!-- POWER SELECTION SCREEN -->
-    <section id="power-selection-screen" class="screen hidden">
-        <header>
-            <h2>Select Your Reward</h2>
-            <div id="power-options"></div>
-        </header>
+    <section id="power-selection-screen" class="screen d-none py-4">
+        <div class="container text-center">
+            <h2 class="mb-4">Select Your Reward</h2>
+            <div id="power-options" class="row justify-content-center gap-3"></div>
+        </div>
     </section>
 
     <!-- END SCREEN -->
-    <section id="end-screen" class="screen hidden">
-        <h2 id="end-title"></h2>
-        <button id="restart-btn">Play Again</button>
-        <button id="cancel-btn">Home</button>
+    <section id="end-screen" class="screen d-none text-center py-5">
+        <div class="container">
+            <h2 id="end-title" class="mb-4"></h2>
+            <div class="d-flex justify-content-center gap-2">
+            <button id="restart-btn" class="btn btn-success">Play Again</button>
+            <button id="cancel-btn" class="btn btn-secondary">Home</button>
+            </div>
+        </div>
     </section>
 
     <script type="module" src="./js/app.js"></script>

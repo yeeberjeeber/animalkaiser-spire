@@ -7,14 +7,14 @@ import { gameState } from "./app.js";
 
 /* TURN BASED FUNCTIONS */
 export function onTurnStart() {
+
   //Heal 15 HP Passive for Common
   const passive = applyPassive(gameState.player, "onTurnStart");
-  console.log(passive);
 
-  if (passive === true) {
+  if(gameState.player.rarity === "Common") {
     addBattleLog("Player heals 15 HP!");
   }
-  
+
   updateHP();
 }
 
@@ -23,11 +23,7 @@ export function startRound() {
 
   //Apply power if any
   const power = applyPowers(gameState.player, "onRoundStart")
-  console.log(power);
-
-  if (power === true) {
-    addBattleLog("Healing power applied!");
-  }
+  addBattleLog("Healing power applied!");
   
   updateHP();
 }
@@ -60,10 +56,6 @@ export function getRandomEnemyForRound(round) {
 }
 
 export function endTurn() {
-  gameState.turn++;
-  // proceed to next turn
-
-  gameState.playerRPS = null;
   gameState.enemyRPS = null;
   updateRPSUI();
 
@@ -72,6 +64,12 @@ export function endTurn() {
     addBattleLog("Enemy's turn");
   } else {
     gameState.currentTurn = "player";
+  
+    // proceed to next turn
+    gameState.turn++;
+
+    addBattleLog(`Turn: ${gameState.turn}`);
+    addBattleLog(`Player's turn to attack`);
     onTurnStart();
   }
 
@@ -88,7 +86,6 @@ export function endRound() {
   // proceed to next battle or end game if round exceeds max
 
   gameState.turn = 1;
-  gameState.playerRPS = null;
   gameState.enemyRPS = null;
 
   startRound();

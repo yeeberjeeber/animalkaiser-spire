@@ -10,10 +10,10 @@ const screens = document.querySelectorAll(".screen");
 //Changing screens, keep hidden if moving to next screen
 export function showScreen(screenId) {
   screens.forEach(screen => {
-    screen.classList.add("hidden");
+    screen.classList.add("d-none");
   });
 
-  document.getElementById(screenId).classList.remove("hidden");
+  document.getElementById(screenId).classList.remove("d-none");
 }
 
 
@@ -27,28 +27,39 @@ export function renderAnimalChoices() {
     .sort(() => Math.random() - 0.5) // shuffle
     .slice(0, 3);
 
-  // ---- ANIMAL CARD CREATION ----
+  // ---- ANIMAL CARD CREATION WITH BOOTSTRAP ----
+  const row = document.createElement("div");
+  row.classList.add("row", "justify-content-center", "g-3"); 
+
   choices.forEach(animal => {
+    const col = document.createElement("div");
+    col.classList.add("col-12", "col-md-4"); 
+
     const card = document.createElement("div");
-    card.classList.add("animal-card", animal.rarity.toLowerCase());
-    
-    //populating the card
+    card.classList.add("card", "text-center", "animal-card", animal.rarity.toLowerCase());
+    card.style.height = "300px";
+
     card.innerHTML = `
-      <h3>${animal.name}</h3>
-      <p>HP: ${animal.maxHP}</p>
-      <p>Damage: ${animal.dmgMin}-${animal.dmgMax}</p>
-      <p>Rarity: ${animal.rarity}</p>
+      <div class="card-body">
+        <h5 class="card-title">${animal.name}</h5>
+        <p class="card-text">HP: ${animal.maxHP}</p>
+        <p class="card-text">Damage: ${animal.dmgMin}-${animal.dmgMax}</p>
+        <p class="card-text">Rarity: ${animal.rarity}</p>
+      </div>
     `;
 
     card.addEventListener("click", () => {
       gameState.player = createPlayer(animal);
-      console.log(gameState.player)
+      console.log(gameState.player);
       showScreen("battle-screen");
       startBattle();
     });
 
-    container.appendChild(card);
+    col.appendChild(card);
+    row.appendChild(col);
   });
+
+  container.appendChild(row);
 }
 
 
