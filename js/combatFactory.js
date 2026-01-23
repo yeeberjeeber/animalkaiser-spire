@@ -1,7 +1,7 @@
 //Function js file
 
 import { rarityPassives } from './data.js';
-import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog } from './screenFactory.js';
+import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog, drawSprite } from './screenFactory.js';
 import { onTurnStart, startRound, getRandomEnemyForRound, endTurn, gameOver} from './turnFactory.js';
 import { gameState, choices } from "./app.js";
 
@@ -61,7 +61,8 @@ export function createPlayer(animal) {
       ...animal,
       currentHP: animal.maxHP,
       passives: rarityPassives[animal.rarity], //lookup to get passive effects
-      enhancements: []
+      activePowers: [],
+      sprite: animal.sprite
     };
 }
 
@@ -97,6 +98,9 @@ export function applyPowers(entity, hook, value = null, context = {}) {
 
 // //Enemy attack calculation
 export function enemyAttack() {
+  
+  drawSprite(gameState.enemy, "attack", "enemy-canvas");
+
   gameState.enemyRPS = rollEnemyRPS();
 
   console.log(gameState.enemyRPS);
@@ -116,12 +120,20 @@ export function playerDefend(event) {
   addBattleLog(`Enemy ${outcome}`);
 
   if(outcome === "win"){
+
+    drawSprite(gameState.player, "hurt", "player-canvas");
+
     const damage = rollDamage(gameState.enemy);
     gameState.player.currentHP -= damage;
     if (gameState.player.currentHP < 0) gameState.player.currentHP = 0;
 
     addBattleLog(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
     updateHP();
+
+    setTimeout(() => {
+      drawSprite(gameState.player, "idle", "player-canvas");
+      drawSprite(gameState.enemy, "idle", "enemy-canvas");
+    }, 300);
 
     if (gameState.player.currentHP <= 0) {
       addBattleLog(`${gameState.player.name} is defeated!`);
@@ -132,6 +144,7 @@ export function playerDefend(event) {
     endTurn();
   } else {
 
+    drawSprite(gameState.enemy, "idle", "enemy-canvas");
     endTurn();
 
   }
@@ -140,6 +153,8 @@ export function playerDefend(event) {
 
 //Player attack calculation
 export function playerAttack(event) {
+
+  drawSprite(gameState.player, "attack", "player-canvas");
 
   const playerChoice = event.target.id.replace("player-", "");
   gameState.playerRPS = playerChoice;
@@ -154,6 +169,9 @@ export function playerAttack(event) {
   addBattleLog(`Player ${outcome}`);
 
   if (outcome === "win") {
+
+    drawSprite(gameState.enemy, "hurt", "enemy-canvas");
+
     let damage = rollDamage(gameState.player);
 
    // Bronze passive
@@ -171,6 +189,11 @@ export function playerAttack(event) {
     addBattleLog(`${gameState.player.name} hits ${gameState.enemy.name} for ${damage} damage!`);
     updateHP();
 
+    setTimeout(() => {
+      drawSprite(gameState.player, "idle", "player-canvas");
+      drawSprite(gameState.enemy, "idle", "enemy-canvas");
+    }, 300);
+
     if (gameState.enemy.currentHP <= 0) {
       addBattleLog(`${gameState.enemy.name} is defeated!`);
       setTimeout(() => {
@@ -184,6 +207,7 @@ export function playerAttack(event) {
 
   } else  {
 
+    drawSprite(gameState.player, "idle", "player-canvas");
     endTurn();
 
   }

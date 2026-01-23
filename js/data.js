@@ -1,21 +1,276 @@
 import { addBattleLog } from "./screenFactory.js";
 
 export const animals = [
-    {id: 1, name: "Lion", maxHP: 120, dmgMin: 22, dmgMax: 25, rarity: "Gold"},
-    {id: 2, name: "Bald Eagle", maxHP: 90, dmgMin: 23, dmgMax: 30, rarity: "Gold"},
-    {id: 3, name: "Great White Shark", maxHP: 110, dmgMin: 20, dmgMax: 27, rarity: "Gold"},
-    {id: 4, name: "Bengal Tiger", maxHP: 120, dmgMin: 21, dmgMax: 26, rarity: "Gold"},
-    {id: 5, name: "Polar Bear", maxHP: 140, dmgMin: 13, dmgMax: 19, rarity: "Silver"},
-    {id: 6, name: "Indian Cobra", maxHP: 100, dmgMin: 14, dmgMax: 21, rarity: "Silver"},
-    {id: 7, name: "Indian Elephant", maxHP: 150, dmgMin: 11, dmgMax: 20, rarity: "Silver"},
-    {id: 8, name: "Gray Wolf", maxHP: 80, dmgMin: 15, dmgMax: 22, rarity: "Bronze"},
-    {id: 9, name: "Panda", maxHP: 100, dmgMin: 13, dmgMax: 18, rarity: "Bronze"},
-    {id: 10, name: "Nile Crocodile", maxHP: 100, dmgMin: 17, dmgMax: 22, rarity: "Bronze"},
-    {id: 11, name: "Brown Bear", maxHP: 100, dmgMin: 10, dmgMax: 20, rarity: "Common"},
-    {id: 12, name: "Cheetah", maxHP: 70, dmgMin: 12, dmgMax: 19, rarity: "Common"},
-    {id: 13, name: "Black Panther", maxHP: 70, dmgMin: 15, dmgMax: 19, rarity: "Common"},
-    {id: 14, name: "Peregrine Falcon", maxHP: 50, dmgMin: 12, dmgMax: 19, rarity: "Common"},
-    {id: 15, name: "Manta Ray", maxHP: 60, dmgMin: 15, dmgMax: 19, rarity: "Common"}
+    {
+      id: 1, 
+      name: "Lion", 
+      maxHP: 120, 
+      dmgMin: 22, 
+      dmgMax: 25, 
+      rarity: "Gold", 
+      sprite: {
+        sheet: "./sprites/player/lion.png",  
+        frameWidth: 42, 
+        frameHeight: 36, 
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },      
+    {
+      id: 2, 
+      name: "Vulture", 
+      maxHP: 90, 
+      dmgMin: 23, 
+      dmgMax: 30, 
+      rarity: "Gold",
+      sprite: {
+        sheet: "./sprites/player/vulture_fly.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 3, 
+      name: "Great White Shark", 
+      maxHP: 110, 
+      dmgMin: 20, 
+      dmgMax: 27, 
+      rarity: "Gold",
+      sprite: {
+        sheet: "./sprites/player/shark_full_blue_1.png",
+        frameWidth: 64, 
+        frameHeight: 48,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 4, 
+      name: "Bengal Tiger", 
+      maxHP: 120, 
+      dmgMin: 21, 
+      dmgMax: 26, 
+      rarity: "Gold",
+      sprite: {
+        sheet: "./sprites/player/tiger.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 5, 
+      name: "Bison", 
+      maxHP: 140, 
+      dmgMin: 13, 
+      dmgMax: 19, 
+      rarity: "Silver",
+      sprite: {
+        sheet: "./sprites/player/bison.png",
+        frameWidth: 52, 
+        frameHeight: 53,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 6, 
+      name: "Walrus", 
+      maxHP: 100, 
+      dmgMin: 14, 
+      dmgMax: 21, 
+      rarity: "Silver",
+      sprite: {
+        sheet: "./sprites/player/walrus.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 7, 
+      name: "Indian Elephant", 
+      maxHP: 150, 
+      dmgMin: 11, 
+      dmgMax: 20, 
+      rarity: "Silver",
+      sprite: {
+        sheet: "./sprites/player/elephant.png",
+        frameWidth: 52, 
+        frameHeight: 53,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 8, 
+      name: "Kangaroo", 
+      maxHP: 80, 
+      dmgMin: 15, 
+      dmgMax: 22, 
+      rarity: "Bronze",
+      sprite: {
+        sheet: "./sprites/player/kangaroo.png",
+        frameWidth: 52, 
+        frameHeight: 53,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 9, 
+      name: "Hippopotamus", 
+      maxHP: 100, 
+      dmgMin: 13, 
+      dmgMax: 18, 
+      rarity: "Bronze",
+      sprite: {
+        sheet: "./sprites/player/hippo.png",
+        frameWidth: 52, 
+        frameHeight: 53,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 10, 
+      name: "Nile Crocodile", 
+      maxHP: 100, 
+      dmgMin: 17, 
+      dmgMax: 22, 
+      rarity: "Bronze",
+      sprite: {
+        sheet: "./sprites/player/crocodile.png",
+        frameWidth: 76, 
+        frameHeight: 53,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 11, 
+      name: "Camel", 
+      maxHP: 100, 
+      dmgMin: 10, 
+      dmgMax: 20, 
+      rarity: "Common",
+      sprite: {
+        sheet: "./sprites/player/camel_b.png",
+        frameWidth: 52, 
+        frameHeight: 53,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 12, 
+      name: "Horseshoe Crab", 
+      maxHP: 70, 
+      dmgMin: 12, 
+      dmgMax: 19, 
+      rarity: "Common",
+      sprite: {
+        sheet: "./sprites/player/horseshoe_crab.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 13, 
+      name: "Black Panther", 
+      maxHP: 70, 
+      dmgMin: 15, 
+      dmgMax: 19, 
+      rarity: "Common",
+      sprite: {
+        sheet: "./sprites/player/panther.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 14, 
+      name: "Zebra", 
+      maxHP: 50, 
+      dmgMin: 12, 
+      dmgMax: 19, 
+      rarity: "Common",
+      sprite: {
+        sheet: "./sprites/player/zebra.png",
+        frameWidth: 52, 
+        frameHeight: 53,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    },
+    {
+      id: 15, 
+      name: "Stingray", 
+      maxHP: 60, 
+      dmgMin: 15, 
+      dmgMax: 19, 
+      rarity: "Common",
+      sprite: {
+        sheet: "./sprites/player/ray.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+      }
+    }
 ]
 
 export const rarityPassives = {
@@ -81,12 +336,148 @@ export const powerCards = [
 
 
 export const enemies = [
-  { id: 1, name: "Wild Boar", maxHP: 100, dmgMin: 11, dmgMax: 15, difficulty: "Easy"},
-  { id: 2, name: "Grizzly Bear", maxHP: 110, dmgMin: 14, dmgMax: 20, difficulty: "Easy"},
-  { id: 3, name: "Snow Leopard", maxHP: 90, dmgMin: 12, dmgMax: 18, difficulty: "Easy" },
-  { id: 4, name: "Trickster Fox", maxHP: 70, dmgMin: 8, dmgMax: 38, difficulty: "Medium" },
-  { id: 5, name: "Crocodile", maxHP: 100, dmgMin: 19, dmgMax: 25, difficulty: "Medium" },
-  { id: 6, name: "Raptor", maxHP: 90, dmgMin: 24, dmgMax: 32, difficulty: "Hard" },
-  { id: 7, name: "Elephant Calf", maxHP: 140, dmgMin: 30, dmgMax: 48, difficulty: "Hard" },
-  { id: 8, name: "Siegfried", maxHP: 500, dmgMin: 48, dmgMax: 98, difficulty: "Boss" }
+  { 
+    id: 1, 
+    name: "Pufferfish", 
+    maxHP: 60, 
+    dmgMin: 11, 
+    dmgMax: 15, 
+    difficulty: "Easy",
+    sprite: {
+      sheet: "./sprites/enemy/pufferfish_big.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+    }
+  },
+  { 
+    id: 2, 
+    name: "Owl", 
+    maxHP: 90, 
+    dmgMin: 12, 
+    dmgMax: 18, 
+    difficulty: "Easy",
+    sprite: {
+      sheet: "./sprites/enemy/owl_fly.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 1, col: 1, speed: 500 },
+          attack: { frames: 1, row: 1, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 1, col: 0, speed: 500 }
+        }
+    }
+  },
+  { 
+    id: 3, 
+    name: "Sea Turtle", 
+    maxHP: 120, 
+    dmgMin: 10, 
+    dmgMax: 14, 
+    difficulty: "Easy",
+    sprite: {
+      sheet: "./sprites/enemy/seaturtle.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 2, col: 1, speed: 500 },
+          attack: { frames: 1, row: 2, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 2, col: 0, speed: 500 }
+        }
+    }
+  },
+  { 
+    id: 4, 
+    name: "Rhinoceros", 
+    maxHP: 70, 
+    dmgMin: 8, 
+    dmgMax: 38, 
+    difficulty: "Medium",
+    sprite: {
+      sheet: "./sprites/enemy/rhinoceros.png",
+        frameWidth: 52, 
+        frameHeight: 53,
+        animations: {
+          idle: { frames: 1, row: 1, col: 1, speed: 500 },
+          attack: { frames: 1, row: 1, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 1, col: 0, speed: 500 }
+        }
+    }
+  },
+  { 
+    id: 5, 
+    name: "Sabretooth Tiger", 
+    maxHP: 100, 
+    dmgMin: 19, 
+    dmgMax: 25, 
+    difficulty: "Medium",
+    sprite: {
+      sheet: "./sprites/enemy/sabretooth.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 1, col: 1, speed: 500 },
+          attack: { frames: 1, row: 1, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 1, col: 0, speed: 500 }
+        }
+    }
+  },
+  { 
+    id: 6, 
+    name: "Gorilla", 
+    maxHP: 90, 
+    dmgMin: 24, 
+    dmgMax: 32, 
+    difficulty: "Hard",
+    sprite: {
+      sheet: "./sprites/enemy/gorilla.png",
+        frameWidth: 42, 
+        frameHeight: 36,
+        animations: {
+          idle: { frames: 1, row: 1, col: 1, speed: 500 },
+          attack: { frames: 1, row: 1, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 1, col: 0, speed: 500 }
+        }
+    }
+  },
+  { 
+    id: 7, 
+    name: "Elephant Calf", 
+    maxHP: 140, 
+    dmgMin: 30, 
+    dmgMax: 48, 
+    difficulty: "Hard",
+    sprite: {
+      sheet: "./sprites/enemy/elephant_baby.png",
+        frameWidth: 52, 
+        frameHeight: 53,
+        animations: {
+          idle: { frames: 1, row: 1, col: 1, speed: 500 },
+          attack: { frames: 1, row: 1, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 1, col: 0, speed: 500 }
+        }
+    }
+  },
+  { 
+    id: 8, 
+    name: "Siegfried", 
+    maxHP: 500, 
+    dmgMin: 48, 
+    dmgMax: 98, 
+    difficulty: "Boss",
+    sprite: {
+      sheet: "./sprites/enemy/mammoth.png",
+        frameWidth: 52, 
+        frameHeight: 53,
+        animations: {
+          idle: { frames: 1, row: 1, col: 1, speed: 500 },
+          attack: { frames: 1, row: 1, col: 2, speed: 500 },
+          hurt: { frames: 1, row: 1, col: 0, speed: 500 }
+        }
+    }
+  }
 ]

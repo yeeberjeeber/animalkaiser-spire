@@ -75,6 +75,9 @@ export function setupBattleScreen() {
 
   // Initialize HP bars
   updateHP();
+
+  drawSprite(gameState.player, "idle", "player-canvas");
+  drawSprite(gameState.enemy, "idle", "enemy-canvas");
 }
 
 
@@ -146,4 +149,26 @@ export function addBattleLog(message) {
 
   // Auto-scroll to bottom
   log.scrollTop = log.scrollHeight;
+}
+
+export function drawSprite(entity, animationName, canvasId) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext("2d");
+  const sprite = entity.sprite;
+  const anim = sprite.animations[animationName];
+
+  if (!sprite || !anim) return;
+
+  const img = new Image();
+  img.src = sprite.sheet;
+
+  img.onload = () => {
+    const sx = anim.col * sprite.frameWidth; // source x
+    const sy = anim.row * sprite.frameHeight; // source y
+    const sw = sprite.frameWidth;
+    const sh = sprite.frameHeight;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+  };
 }
