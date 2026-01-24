@@ -1,3 +1,4 @@
+import { gameState } from "./app.js";
 import { addBattleLog } from "./screenFactory.js";
 
 export const animals = [
@@ -273,14 +274,80 @@ export const animals = [
     }
 ]
 
+export const buffHooks = [
+  {
+    id: 1,
+    name: "Increase Damage",
+    hook: "onAttack"
+  },
+  {
+    id: 2,
+    name: "Rock Aggressor",
+    hook: "onRockAttack"
+  },
+  {
+    id: 3,
+    name: "Paper Aggressor",
+    hook: "onPaperAttack"
+  },
+  {
+    id: 4,
+    name: "Scissors Aggressor",
+    hook: "onScissorsAttack"
+  }
+]
+
+export const randomBuff = [
+  { 
+    id: 1,
+    name: "Increase Damage",
+    description: "Increases damage by 5",
+    type: "attack",
+    onAttack(player, damage) {
+      return damage + 5;
+    }
+  },
+  {
+    id: 2,
+    name: "Rock Aggressor",
+    description: "Rock deals more damage this round",
+    type: "attack",
+    onRockAttack(player, damage) {
+      if (gameState.playerRPS === "rock"){
+        return damage + 5;
+      }
+    }
+  },
+  {
+    id: 3,
+    name: "Scissors Aggressor",
+    description: "Scissors deals more damage this round",
+    type: "attack",
+    onScissorsAttack(player, damage) {
+      if (gameState.playerRPS === "scissors"){
+        return damage + 5;
+      }
+    }
+  },
+  {
+    id: 4,
+    name: "Paper Aggressor",
+    description: "Scissors deals more damage this round",
+    type: "attack",
+    onPaperAttack(player, damage) {
+      if (gameState.playerRPS === "paper"){
+        return damage + 5;
+      }
+    }
+  }
+]
+
 export const rarityPassives = {
   Common: {
-    description: "Heal 15 HP at the start of each turn",
+    description: "Heal 7 HP at the start of each turn",
     onTurnStart(player) {
-      player.currentHP = Math.min(
-        player.currentHP + 15,
-        player.maxHP
-      );
+      player.currentHP = Math.min(player.currentHP + 7, player.maxHP);
+      addBattleLog("Player heals 7 HP!");
     }
   },
   Bronze: {
@@ -291,9 +358,9 @@ export const rarityPassives = {
     }
   },
   Silver: {
-    description: "10% chance to deal +5 damage",
+    description: "70% chance to deal +5 damage",
     onAttack(attacker, damage) {
-      if (Math.random() < 0.1) {
+      if (Math.random() < 0.7) {
         return damage + 5;
       }
       return damage;

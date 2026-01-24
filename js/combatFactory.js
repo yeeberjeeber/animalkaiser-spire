@@ -1,10 +1,10 @@
-//Function js file
+//Combat Function js file
 
-import { rarityPassives } from './data.js';
-import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog, drawSprite } from './screenFactory.js';
+import { rarityPassives, randomBuff, buffHooks } from './data.js';
+import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog, drawSprite, showEnemyThinking, hideEnemyThinking } from './screenFactory.js';
 import { onTurnStart, startRound, getRandomEnemyForRound, endTurn, gameOver} from './turnFactory.js';
 import { gameState, choices } from "./app.js";
-import { applyPassive, applyPowers } from './engine.js';
+import { applyPassive, applyPowers, applyBuff } from './engine.js';
 
 /* GAMEPLAY FUNCTIONS */
 
@@ -24,6 +24,23 @@ function rollDamage(attacker) {
   return damage;
 } 
 
+export function rollBuff() {
+  const buff = [...randomBuff].sort(() => Math.random() - 0.5).at(0);
+  const buffList = [...buffHooks];
+
+  console.log(buff);
+  gameState.player.randomBuffs.push(buff);
+  addBattleLog(`Buff ${buff.name} applied!`);
+
+  buffList.forEach(element => {
+    if (element.name === buff.name) {
+      addBattleLog(element.hook);
+      gameState.playerBuff = element.hook;
+    }
+  });
+
+}
+
 /* ROCK PAPER SCISSORS FUNCTIONS */
 function rollEnemyRPS() {
   return choices[Math.floor(Math.random() * choices.length)];
@@ -31,17 +48,47 @@ function rollEnemyRPS() {
 
 //Highlight the selected box
 export function updateRPSUI() {
+
+  const playerSquares = [
+    document.getElementById("player-rock"),
+    document.getElementById("player-paper"),
+    document.getElementById("player-scissors")
+  ]
+
+  const allDisabled = playerSquares.every(div => div.classList.contains("disabled"));
+
   //Checks each square under rps-square class
   document.querySelectorAll(".rps-square").forEach(el => {
     el.classList.remove("selected");
+    el.classList.remove("enemy-selected");
+
+    if(el.id === `player-${gameState.playerRPS}` && gameState.playerSelected === 3) {
+      el.classList.add("disabled");
+      gameState.playerSelected = 0;
+    }
+
+    if (el.id === `player-${gameState.playerRPS}` && allDisabled) {
+      el.classList.add("disabled");
+      gameState.playerSelected = 0;
+
+      const shuffled = [...playerSquares].sort(() => Math.random() - 0.5);
+
+      shuffled[0].classList.remove("disabled");
+      shuffled[1].classList.remove("disabled");
+    } 
 
     //Adds a selected to the class once checked for selection match
     if (el.id === `player-${gameState.playerRPS}`) {
       el.classList.add("selected");
     }
 
-    if (el.id === `enemy-${gameState.enemyRPS}`) {
+    //Enemy logic checking
+    if (gameState.currentTurn === 'player' && el.id === `enemy-${gameState.enemyRPS}`) {
       el.classList.add("selected");
+    } else if (gameState.currentTurn === 'enemy' && el.id === `enemy-${gameState.enemyRPS}`) {
+      el.classList.add("enemy-selected");
+    } else {
+      return;
     }
   });
 }
@@ -62,6 +109,8 @@ export function createPlayer(animal) {
       ...animal,
       currentHP: animal.maxHP,
       passives: rarityPassives[animal.rarity], //lookup to get passive effects
+      activePowers: [],
+      randomBuffs: [],
       sprite: animal.sprite
     };
 }
@@ -71,6 +120,9 @@ export function createPlayer(animal) {
 export function enemyAttack() {
 
   gameState.enemyRPS = rollEnemyRPS();
+
+  
+  updateRPSUI();
   
   setTimeout(() => {
     drawSprite(gameState.enemy, "attack", "enemy-canvas");
@@ -126,16 +178,28 @@ export function playerDefend(event) {
 //Player attack calculation
 export function playerAttack(event) {
 
-  drawSprite(gameState.player, "attack", "player-canvas");
-
   const playerChoice = event.target.id.replace("player-", "");
   gameState.playerRPS = playerChoice;
   gameState.enemyRPS = rollEnemyRPS();
 
+  gameState.playerLastRPS = playerChoice;
+
+  //Increase count of same selection
+  if (gameState.playerRPS === gameState.playerLastRPS) {
+    gameState.playerSelected++;
+    console.log(gameState.playerSelected);
+  }
+
   updateRPSUI();
+  
+  setTimeout(600);
 
   console.log(playerChoice);
   console.log(gameState.enemyRPS);
+  console.log(gameState.playerLastRPS);
+  
+
+  drawSprite(gameState.player, "attack", "player-canvas");
 
   const outcome = resolveRPS(playerChoice, gameState.enemyRPS);
 
@@ -143,9 +207,13 @@ export function playerAttack(event) {
 
     drawSprite(gameState.enemy, "hurt", "enemy-canvas");
 
-    let damage = rollDamage(gameState.player);
+    let damage = rollDamage(gameState.player);;
 
-   // Bronze passive
+    console.log(gameState.playerBuff);
+
+    damage = applyBuff(gameState.player, gameState.playerBuff, damage);
+
+   // Bronze & Silver passive
     damage = applyPassive(gameState.player, "onAttack", damage);
 
     // Gold passive
@@ -174,11 +242,13 @@ export function playerAttack(event) {
       return;
     }
 
+    setTimeout(600);
     endTurn();
 
   } else  {
 
     drawSprite(gameState.player, "idle", "player-canvas");
+    setTimeout(600);
     endTurn();
 
   }

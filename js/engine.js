@@ -1,3 +1,6 @@
+
+
+//Passive function
 export function applyPassive(entity, hook, value = null, context = {}) {
   //Check if gameState.player has passives
   if (!entity || !entity.passives) return value;
@@ -23,5 +26,21 @@ export function applyPowers(entity, hook, value = null, context = {}) {
     }
   }
   
+  return result;
+}
+
+export function applyBuff(entity, hook, value = null, context = {}) {
+  //Check if gameState.player has buffs
+  if (!entity?.randomBuffs) return value;
+
+  let result = value;
+
+  for (const power of entity.randomBuffs) {
+    const fn = power[hook];
+    if (typeof fn === "function") {
+      result = fn(entity, result, context) ?? result;
+    }
+  }
+
   return result;
 }

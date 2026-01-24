@@ -138,7 +138,7 @@ export function renderPowerChoices() {
 
     //Click action
     card.addEventListener("click", () => {
-      gameState.activePowers.push(power);
+      gameState.player.activePowers.push(power);
       console.log("Selected power:", power);
       showScreen("battle-screen");
       endRound();
@@ -185,4 +185,40 @@ export function drawSprite(entity, animationName, canvasId) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
   };
+}
+
+/* Modifying UI based on Turn */
+export function changeFirstPlayerTurnUI() {
+  document.getElementById('player-turn').classList.add('shadow-lg');
+  document.getElementById('enemy-turn').classList.remove('shadow-lg');
+  document.getElementById('enemy-turn').classList.remove('bg-danger');
+  document.getElementById('enemy-turn').classList.add('bg-secondary');
+}
+
+export function changePlayerTurnUI() {
+  document.getElementById('player-turn').classList.add('shadow-lg');
+  document.getElementById('player-turn').classList.remove('bg-secondary');
+  document.getElementById('player-turn').classList.add('bg-primary');
+  document.getElementById('enemy-turn').classList.remove('shadow-lg');
+  document.getElementById('enemy-turn').classList.remove('bg-danger');
+  document.getElementById('enemy-turn').classList.add('bg-secondary');
+}
+
+export function changeEnemyTurnUI() {
+  document.getElementById('enemy-turn').classList.add('shadow-lg');
+  document.getElementById('enemy-turn').classList.remove('bg-secondary');
+  document.getElementById('enemy-turn').classList.add('bg-danger');
+  document.getElementById('player-turn').classList.remove('shadow-lg');
+  document.getElementById('player-turn').classList.remove('bg-primary');
+  document.getElementById('player-turn').classList.add('bg-secondary');
+}
+
+
+//Enemy Thinking UI
+export function showEnemyThinking() {
+  document.getElementById("enemy-container").classList.add("thinking");
+}
+
+export function hideEnemyThinking() {
+  document.getElementById("enemy-container").classList.remove("thinking");
 }

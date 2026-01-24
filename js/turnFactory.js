@@ -1,7 +1,7 @@
 //Turn related functions
 
-import { updateHP, addBattleLog, setupBattleScreen, showScreen } from "./screenFactory.js";
-import { enemyAttack, updateRPSUI } from "./combatFactory.js"
+import { updateHP, addBattleLog, setupBattleScreen, showScreen, changeFirstPlayerTurnUI, changePlayerTurnUI, changeEnemyTurnUI } from "./screenFactory.js";
+import { enemyAttack, updateRPSUI, rollBuff } from "./combatFactory.js"
 import { enemies } from "./data.js";
 import { gameState } from "./app.js";
 import { applyPassive, applyPowers } from './engine.js';
@@ -11,33 +11,16 @@ export function onTurnStart() {
 
   if(gameState.currentTurn === 'player') {
     if (document.getElementById('player-turn').classList.contains('bg-primary')) {
-      document.getElementById('player-turn').classList.add('shadow-lg');
-      document.getElementById('enemy-turn').classList.remove('shadow-lg');
-      document.getElementById('enemy-turn').classList.remove('bg-danger');
-      document.getElementById('enemy-turn').classList.add('bg-secondary');
+      changeFirstPlayerTurnUI();
     } else {
-      document.getElementById('player-turn').classList.add('shadow-lg');
-      document.getElementById('player-turn').classList.remove('bg-secondary');
-      document.getElementById('player-turn').classList.add('bg-primary');
-      document.getElementById('enemy-turn').classList.remove('shadow-lg');
-      document.getElementById('enemy-turn').classList.remove('bg-danger');
-      document.getElementById('enemy-turn').classList.add('bg-secondary');
+      changePlayerTurnUI();
     }
   } else {
-    document.getElementById('enemy-turn').classList.add('shadow-lg');
-    document.getElementById('enemy-turn').classList.remove('bg-secondary');
-    document.getElementById('enemy-turn').classList.add('bg-danger');
-    document.getElementById('player-turn').classList.remove('shadow-lg');
-    document.getElementById('player-turn').classList.remove('bg-primary');
-    document.getElementById('player-turn').classList.add('bg-secondary');
+    changeEnemyTurnUI();
   }
 
   //Heal 15 HP Passive for Common
-  const passive = applyPassive(gameState.player, "onTurnStart");
-
-  if(gameState.player.rarity === "Common") {
-    addBattleLog("Player heals 15 HP!");
-  }
+  applyPassive(gameState.player, "onTurnStart");
 
   updateHP();
 }
@@ -45,10 +28,22 @@ export function onTurnStart() {
 export function startRound() {
 
   gameState.firstAttackUsed = false;
+  rollBuff();
+
+  if (!gameState.player) return;
+  gameState.player.activePowers = gameState.player.activePowers || [];
   
-  //Apply power if any
-  const power = applyPowers(gameState.player, "onRoundStart")
-  console.log("Healing power applied!");
+  if (gameState.player?.activePowers) {
+    gameState.player.activePowers = gameState.player.activePowers.filter (power => {
+      if (power.type === "heal") {
+        applyPowers(gameState.player, "onRoundStart")
+        console.log("Healing power applied!");
+        return false;
+      }
+      return true;
+    })
+  }
+  
   
   updateHP();
 }
@@ -82,6 +77,7 @@ export function getRandomEnemyForRound(round) {
 
 export function endTurn() {
   gameState.enemyRPS = null;
+  
   updateRPSUI();
 
   if(gameState.currentTurn === "player"){
@@ -100,12 +96,9 @@ export function endTurn() {
   if (gameState.currentTurn === "enemy") {
   
   //Setting the colors
-  document.getElementById('enemy-turn').classList.add('shadow-lg');
-  document.getElementById('enemy-turn').classList.remove('bg-secondary');
-  document.getElementById('enemy-turn').classList.add('bg-danger');
-  document.getElementById('player-turn').classList.remove('shadow-lg');
-  document.getElementById('player-turn').classList.remove('bg-primary');
-  document.getElementById('player-turn').classList.add('bg-secondary');
+  changeEnemyTurnUI();
+
+  setTimeout(600);
 
   enemyAttack();
   }
@@ -118,6 +111,14 @@ export function endRound() {
 
   gameState.turn = 1;
   gameState.enemyRPS = null;
+  gameState.playerBuff = null;
+
+  document.querySelectorAll("rps-square").forEach(el => {
+    el.classList.remove("disabled");
+  });
+
+  gameState.playerLastRPS = null;
+  gameState.playerSelected = 0;
 
   
   document.getElementById('round-number').textContent = `Round: ${gameState.round}`;
