@@ -4,6 +4,7 @@ import { rarityPassives } from './data.js';
 import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog, drawSprite } from './screenFactory.js';
 import { onTurnStart, startRound, getRandomEnemyForRound, endTurn, gameOver} from './turnFactory.js';
 import { gameState, choices } from "./app.js";
+import { applyPassive, applyPowers } from './engine.js';
 
 /* GAMEPLAY FUNCTIONS */
 
@@ -61,47 +62,21 @@ export function createPlayer(animal) {
       ...animal,
       currentHP: animal.maxHP,
       passives: rarityPassives[animal.rarity], //lookup to get passive effects
-      activePowers: [],
       sprite: animal.sprite
     };
 }
 
 /* ATTACK FUNCTIONS */
-//Helper function
-export function applyPassive(entity, hook, value = null, context = {}) {
-  //To check if gameState.player has passives (it should)
-  if (!entity || !entity.passives) return value;
-
- //Get the function for the specific hook e.g. onAttack, onFirstAttack
-  const func = entity.passives[hook];
-  if (!func) return value;
-
-  //Calling functon in rarityPassives
-  return func(entity, value, context) ?? value;
-}
-
-//Power card function
-export function applyPowers(entity, hook, value = null, context = {}) {
-  if (!entity?.activePowers) return value;
-
-  let result = value;
-
-  for (const power of entity.activePowers) {
-    const fn = power[hook];
-    if (typeof fn === "function") {
-      result = fn(entity, result, context) ?? result;
-    }
-  }
-
-  return result;
-}
-
 // //Enemy attack calculation
 export function enemyAttack() {
-  
-  drawSprite(gameState.enemy, "attack", "enemy-canvas");
 
   gameState.enemyRPS = rollEnemyRPS();
+  
+  setTimeout(() => {
+    drawSprite(gameState.enemy, "attack", "enemy-canvas");
+    drawSprite(gameState.enemy, "idle", "enemy-canvas");
+  }, 500 );
+  
 
   console.log(gameState.enemyRPS);
 }
@@ -117,8 +92,6 @@ export function playerDefend(event) {
 
   const outcome = resolveRPS(gameState.enemyRPS, playerChoice);
 
-  addBattleLog(`Enemy ${outcome}`);
-
   if(outcome === "win"){
 
     drawSprite(gameState.player, "hurt", "player-canvas");
@@ -132,7 +105,7 @@ export function playerDefend(event) {
 
     setTimeout(() => {
       drawSprite(gameState.player, "idle", "player-canvas");
-      drawSprite(gameState.enemy, "idle", "enemy-canvas");
+      
     }, 300);
 
     if (gameState.player.currentHP <= 0) {
@@ -144,7 +117,6 @@ export function playerDefend(event) {
     endTurn();
   } else {
 
-    drawSprite(gameState.enemy, "idle", "enemy-canvas");
     endTurn();
 
   }
@@ -166,7 +138,6 @@ export function playerAttack(event) {
   console.log(gameState.enemyRPS);
 
   const outcome = resolveRPS(playerChoice, gameState.enemyRPS);
-  addBattleLog(`Player ${outcome}`);
 
   if (outcome === "win") {
 
@@ -229,8 +200,16 @@ export function onPlayerRPSClick(event) {
 
 /* START COMBAT FUNCTION */
 export function startBattle() {
-  // Check for player
+  //Check for player
   if (!gameState.player) return console.error("No player selected!");
+
+  //update round and turn
+  document.getElementById('round-number').textContent = `Round: ${gameState.round}`;
+  document.getElementById('turn-number').textContent = `Turn: ${gameState.turn}`;
+
+  //Highlight current turn
+  document.getElementById('player-turn').classList.add('shadow-lg');
+
 
   gameState.player.currentHP = gameState.player.maxHP;
   gameState.player.passives = rarityPassives[gameState.player.rarity]
@@ -243,8 +222,6 @@ export function startBattle() {
 
   //Clear battle log
   document.getElementById("battle-log").textContent = "";
-
-  addBattleLog(`Turn: ${gameState.turn}`);
 
   onTurnStart();
   startRound();

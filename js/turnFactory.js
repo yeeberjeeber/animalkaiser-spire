@@ -1,12 +1,36 @@
 //Turn related functions
 
 import { updateHP, addBattleLog, setupBattleScreen, showScreen } from "./screenFactory.js";
-import { enemyAttack, applyPassive, applyPowers, updateRPSUI } from "./combatFactory.js"
+import { enemyAttack, updateRPSUI } from "./combatFactory.js"
 import { enemies } from "./data.js";
 import { gameState } from "./app.js";
+import { applyPassive, applyPowers } from './engine.js';
 
 /* TURN BASED FUNCTIONS */
 export function onTurnStart() {
+
+  if(gameState.currentTurn === 'player') {
+    if (document.getElementById('player-turn').classList.contains('bg-primary')) {
+      document.getElementById('player-turn').classList.add('shadow-lg');
+      document.getElementById('enemy-turn').classList.remove('shadow-lg');
+      document.getElementById('enemy-turn').classList.remove('bg-danger');
+      document.getElementById('enemy-turn').classList.add('bg-secondary');
+    } else {
+      document.getElementById('player-turn').classList.add('shadow-lg');
+      document.getElementById('player-turn').classList.remove('bg-secondary');
+      document.getElementById('player-turn').classList.add('bg-primary');
+      document.getElementById('enemy-turn').classList.remove('shadow-lg');
+      document.getElementById('enemy-turn').classList.remove('bg-danger');
+      document.getElementById('enemy-turn').classList.add('bg-secondary');
+    }
+  } else {
+    document.getElementById('enemy-turn').classList.add('shadow-lg');
+    document.getElementById('enemy-turn').classList.remove('bg-secondary');
+    document.getElementById('enemy-turn').classList.add('bg-danger');
+    document.getElementById('player-turn').classList.remove('shadow-lg');
+    document.getElementById('player-turn').classList.remove('bg-primary');
+    document.getElementById('player-turn').classList.add('bg-secondary');
+  }
 
   //Heal 15 HP Passive for Common
   const passive = applyPassive(gameState.player, "onTurnStart");
@@ -19,11 +43,12 @@ export function onTurnStart() {
 }
 
 export function startRound() {
-  gameState.firstAttackUsed = false;
 
+  gameState.firstAttackUsed = false;
+  
   //Apply power if any
   const power = applyPowers(gameState.player, "onRoundStart")
-  addBattleLog("Healing power applied!");
+  console.log("Healing power applied!");
   
   updateHP();
 }
@@ -32,8 +57,8 @@ function getDifficultyForRound(round) {
   if (round >= 1 && round <= 2) return "Easy";
   if (round >= 3 && round <= 4) return "Medium";
   if (round === 5) return "Hard";
-  if (round === 6) return "Boss"; // last round
-  return "Easy"; // fallback, in case round is invalid
+  if (round === 6) return "Boss";
+  return "Easy";
 }
 
 //Creating the enemy for each round
@@ -61,20 +86,27 @@ export function endTurn() {
 
   if(gameState.currentTurn === "player"){
     gameState.currentTurn = "enemy";
-    addBattleLog("Enemy's turn");
   } else {
     gameState.currentTurn = "player";
   
     // proceed to next turn
     gameState.turn++;
 
-    addBattleLog(`Turn: ${gameState.turn}`);
-    addBattleLog(`Player's turn to attack`);
+    document.getElementById('turn-number').textContent = `Turn: ${gameState.turn}`;
+
     onTurnStart();
   }
 
   if (gameState.currentTurn === "enemy") {
-  setTimeout(addBattleLog("This is the enemy's turn to attack."), 500);
+  
+  //Setting the colors
+  document.getElementById('enemy-turn').classList.add('shadow-lg');
+  document.getElementById('enemy-turn').classList.remove('bg-secondary');
+  document.getElementById('enemy-turn').classList.add('bg-danger');
+  document.getElementById('player-turn').classList.remove('shadow-lg');
+  document.getElementById('player-turn').classList.remove('bg-primary');
+  document.getElementById('player-turn').classList.add('bg-secondary');
+
   enemyAttack();
   }
 
@@ -83,33 +115,35 @@ export function endTurn() {
 
 export function endRound() {
   gameState.round++;
-  // proceed to next battle or end game if round exceeds max
 
   gameState.turn = 1;
   gameState.enemyRPS = null;
 
+  
+  document.getElementById('round-number').textContent = `Round: ${gameState.round}`;
+  document.getElementById('turn-number').textContent = `Turn: ${gameState.turn}`;
+
   startRound();
 
-  // Check if last round is over
   if (gameState.round > gameState.maxRounds) {
     addBattleLog("Congratulations! You completed the game!");
-    // Optionally show a victory screen
+    //Show a victory screen
     showScreen("victory-screen");
     return;
   }
 
-  // Generate next enemy for the new round
+  //Generate next enemy for the new round
   gameState.enemy = getRandomEnemyForRound(gameState.round);
 
-  // Show battle screen again
+  //Show battle screen again
   setupBattleScreen();
 
-  // Clear battle log for the new round
+  //Clear battle log for the new round
   document.getElementById("battle-log").textContent = "";
 }
 
 export function gameOver() {
-  // Reset game state if needed
+  //Reset game state if needed
   gameState.round = 1;
   gameState.player = null;
   gameState.enemy = null;
@@ -120,6 +154,6 @@ export function gameOver() {
   gameState.enemyRPS = null;
 
 
-  // Show home screen
+  //Show home screen
   showScreen("start-screen");
 }

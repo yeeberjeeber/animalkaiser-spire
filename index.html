@@ -45,7 +45,36 @@
     <section id="battle-screen" class="screen d-none">
     <div class="container py-4">
 
-        <h2 class="text-center mb-4">Battle!</h2>
+        <div id="battle-header" class="battle-header">
+            <!-- Battle Header -->
+            <div class="container my-3">
+                <div class="row align-items-center text-center">
+                    
+                    <!-- Player Turn -->
+                    <div class="col-3">
+                        <div id="player-turn" class="p-2 bg-primary text-white rounded">
+                            Player Turn
+                        </div>
+                    </div>
+
+                    <!-- Round / Turn Info -->
+                    <div class="col-6">
+                        <div class="p-2 bg-light border rounded">
+                            <span id="round-number" class="mx-2 fw-bold">Round: 1</span> |
+                            <span id="turn-number" class="mx-2 fw-bold">Turn: 1</span>
+                        </div>
+                    </div>
+
+                    <!-- Enemy Turn -->
+                    <div class="col-3">
+                        <div id="enemy-turn" class="p-2 bg-danger text-white rounded">
+                            Enemy Turn
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <div class="row justify-content-center align-items-center battle-container">
 

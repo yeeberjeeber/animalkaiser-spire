@@ -140,6 +140,15 @@ body {
   gap: 40px;
 }
 
+#player-turn, #enemy-turn {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+#round-number, #turn-number {
+  font-size: 1.1rem;
+}
+
 .combatant {
   text-align: center;
   width: 200px;

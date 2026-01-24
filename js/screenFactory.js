@@ -105,33 +105,47 @@ export function renderPowerChoices() {
   const container = document.getElementById("power-options");
   container.innerHTML = ""; // Clear previous cards
 
-  const choices = [...powerCards]
-    .slice(0, 2);
+  // Pick 2 power cards to display
+  const choices = [...powerCards].slice(0, 2);
 
-  console.log("Power choices:", choices); // for debugging
-
-  // ---- POWER CARD CREATION ----
   choices.forEach(power => {
+    const col = document.createElement("div");
+    col.className = "col-md-4 mb-3"; // 3 cards per row with spacing
+
+    // Create the card
     const card = document.createElement("div");
-    card.classList.add("power-card", power.type);
+    card.className = "card text-center shadow";
+    card.style.height = "300px";
     
+
+    // Background color based on type
+    if (power.type === "attack") card.classList.add("bg-danger", "text-white");
+    else if (power.type === "heal") card.classList.add("bg-success", "text-white");
+    else card.classList.add("bg-primary", "text-white"); // default
+
+    card.style.cursor = "pointer"; 
+
     card.innerHTML = `
-      <h3>${power.name}</h3>
-      <p>Description: ${power.description}</p>
-      <p>Type: ${power.type}</p>
+      <div class="card-body">
+        <h5 class="card-title">${power.name}</h5>
+        <p class="card-text">${power.description}</p>
+      </div>
     `;
 
+    //Hover effect
+    card.addEventListener("mouseenter", () => card.classList.add("shadow-lg"));
+    card.addEventListener("mouseleave", () => card.classList.remove("shadow-lg"));
+
+    //Click action
     card.addEventListener("click", () => {
-      gameState.playerPower = power;
-
-      gameState.player.activePowers = gameState.player.activePowers || [];
-      gameState.player.activePowers.push(power);
-
+      gameState.activePowers.push(power);
+      console.log("Selected power:", power);
       showScreen("battle-screen");
       endRound();
     });
 
-    container.appendChild(card);
+    col.appendChild(card);
+    container.appendChild(col);
   });
 }
 
