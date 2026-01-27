@@ -1,7 +1,7 @@
 //Combat Function js file
 
-import { rarityPassives, randomBuff, buffHooks } from './data.js';
-import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog, drawSprite, showEnemyThinking, hideEnemyThinking } from './screenFactory.js';
+import { rarityPassives, randomBuff, randomEnemyBuff, buffHooks } from './data.js';
+import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog, drawSprite, showEnemyThinking, hideEnemyThinking, renderBuffIcons } from './screenFactory.js';
 import { onTurnStart, startRound, getRandomEnemyForRound, endTurn, gameOver} from './turnFactory.js';
 import { gameState, choices } from "./app.js";
 import { applyPassive, applyPowers, applyBuff } from './engine.js';
@@ -11,16 +11,18 @@ import { applyPassive, applyPowers, applyBuff } from './engine.js';
 //Rolling damage each turn
 function rollDamage(attacker) {
   let damage;
+  
+  attacker.baseCritChance = applyPowers(gameState, "modifyCritChance", attacker.baseCritChance);
+  attacker.baseCritMultiplier = applyPowers(gameState, "modifyCritDmg", attacker.baseCritMultiplier);
 
-  if (Math.random() < 0.1) {
-    damage = attacker.dmgMax;
+  if (Math.random() < attacker.baseCritChance) {
+    damage = attacker.dmgMax * attacker.baseCritMultiplier;
   } else {
     const roll = (Math.random() + Math.random()) / 2;
     damage = Math.floor(
       roll * (attacker.dmgMax - attacker.dmgMin + 1)
     ) + attacker.dmgMin;
   }
-
   return damage;
 } 
 
@@ -38,7 +40,35 @@ export function rollBuff() {
       gameState.playerBuff = element.hook;
     }
   });
+}
 
+export function rollEnemyBuff() {
+  const buff = [...randomEnemyBuff].sort(() => Math.random() - 0.5).at(0);
+  const buffList = [...buffHooks];
+
+  console.log(buff);
+  gameState.enemy.randomBuffs.push(buff);
+  addBattleLog(`Enemy Buff ${buff.name} applied!`);
+
+  buffList.forEach(element => {
+    if (element.name === buff.name) {
+      addBattleLog(element.hook);
+      gameState.enemyBuff = element.hook;
+    }
+  });
+}
+
+export function setEnemyBuff(entity) {
+  gameState.enemyBuff = null;
+  rollEnemyBuff();
+  if (gameState.enemyBuff === "modifyCritChance") {
+    applyBuff(gameState.enemy, gameState.enemyBuff, entity.baseCritChance);
+  } else if (gameState.enemyBuff === "modifyCritDmg" ) {
+    applyBuff(gameState.enemy, gameState.enemyBuff, entity.baseCritMultiplier);
+  } else {
+    applyBuff(gameState.enemy, gameState.enemyBuff, gameState.enemyCurrentDmg);
+  }
+  
 }
 
 /* ROCK PAPER SCISSORS FUNCTIONS */
@@ -62,14 +92,23 @@ export function updateRPSUI() {
     el.classList.remove("selected");
     el.classList.remove("enemy-selected");
 
-    if(el.id === `player-${gameState.playerRPS}` && gameState.playerSelected === 3) {
+    if(el.id === `player-${gameState.playerAttackRPS}` && gameState.playerSelected === 3) {
+
+      //apply enemy buffs
+      setEnemyBuff(gameState.enemy);
+      renderBuffIcons(gameState.enemy, "enemy-buffs");
+
       el.classList.add("disabled");
       gameState.playerSelected = 0;
     }
 
-    if (el.id === `player-${gameState.playerRPS}` && allDisabled) {
+    if (el.id === `player-${gameState.playerAttackRPS}` && allDisabled) {
       el.classList.add("disabled");
       gameState.playerSelected = 0;
+
+      //apply enemy buffs
+      setEnemyBuff(gameState.enemy);
+      renderBuffIcons(gameState.enemy, "enemy-buffs");
 
       const shuffled = [...playerSquares].sort(() => Math.random() - 0.5);
 
@@ -78,7 +117,7 @@ export function updateRPSUI() {
     } 
 
     //Adds a selected to the class once checked for selection match
-    if (el.id === `player-${gameState.playerRPS}`) {
+    if (el.id === `player-${gameState.playerAttackRPS}`) {
       el.classList.add("selected");
     }
 
@@ -90,6 +129,14 @@ export function updateRPSUI() {
     } else {
       return;
     }
+  });
+}
+
+//Reset locks each turn
+export function resetRPSUI() {
+  //Checks each square under rps-square class
+  document.querySelectorAll(".rps-square").forEach(el => {
+    el.classList.remove("disabled");
   });
 }
 
@@ -108,9 +155,11 @@ export function createPlayer(animal) {
     return {
       ...animal,
       currentHP: animal.maxHP,
-      passives: rarityPassives[animal.rarity], //lookup to get passive effects
+      passives: rarityPassives[animal.rarity] || [], //lookup to get passive effects
       activePowers: [],
       randomBuffs: [],
+      baseCritChance: 0.1,
+      baseCritMultiplier: 1.5,
       sprite: animal.sprite
     };
 }
@@ -121,7 +170,6 @@ export function enemyAttack() {
 
   gameState.enemyRPS = rollEnemyRPS();
 
-  
   updateRPSUI();
   
   setTimeout(() => {
@@ -133,24 +181,25 @@ export function enemyAttack() {
   console.log(gameState.enemyRPS);
 }
 
-export function playerDefend(event) {
+export function playerDefend() {
   if (gameState.currentTurn !== "enemy") return;
-
-  const playerChoice = event.target.id.replace("player-", "");
-
-  gameState.playerRPS = playerChoice;
 
   updateRPSUI();
 
-  const outcome = resolveRPS(gameState.enemyRPS, playerChoice);
+  const outcome = resolveRPS(gameState.enemyRPS, gameState.playerDefendRPS);
 
   if(outcome === "win"){
 
     drawSprite(gameState.player, "hurt", "player-canvas");
 
     const damage = rollDamage(gameState.enemy);
+
+    gameState.enemyCurrentDmg = damage;
+
     gameState.player.currentHP -= damage;
-    if (gameState.player.currentHP < 0) gameState.player.currentHP = 0;
+    if (gameState.player.currentHP < 0) {
+      gameState.player.currentHP = 0;
+    }
 
     addBattleLog(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
     updateHP();
@@ -176,38 +225,28 @@ export function playerDefend(event) {
 }
 
 //Player attack calculation
-export function playerAttack(event) {
+export function playerAttack() {
 
-  const playerChoice = event.target.id.replace("player-", "");
-  gameState.playerRPS = playerChoice;
   gameState.enemyRPS = rollEnemyRPS();
-
-  gameState.playerLastRPS = playerChoice;
-
-  //Increase count of same selection
-  if (gameState.playerRPS === gameState.playerLastRPS) {
-    gameState.playerSelected++;
-    console.log(gameState.playerSelected);
-  }
 
   updateRPSUI();
   
   setTimeout(600);
 
-  console.log(playerChoice);
+  console.log(gameState.playerAttackRPS);
   console.log(gameState.enemyRPS);
-  console.log(gameState.playerLastRPS);
+  console.log(`Player last selected: ${gameState.playerLastRPS}`);
   
 
   drawSprite(gameState.player, "attack", "player-canvas");
 
-  const outcome = resolveRPS(playerChoice, gameState.enemyRPS);
+  const outcome = resolveRPS(gameState.playerAttackRPS, gameState.enemyRPS);
 
   if (outcome === "win") {
 
     drawSprite(gameState.enemy, "hurt", "enemy-canvas");
 
-    let damage = rollDamage(gameState.player);;
+    let damage = rollDamage(gameState.player);
 
     console.log(gameState.playerBuff);
 
@@ -260,10 +299,22 @@ export function onPlayerRPSClick(event) {
   if (!event.target.classList.contains("rps-square")) return;
 
   if (gameState.currentTurn === "player") {
-    playerAttack(event);
+
+    gameState.playerAttackRPS = event.target.id.replace("player-", "");
+
+    //Increase count of same selection
+    if (gameState.playerAttackRPS === gameState.playerLastRPS) {
+      gameState.playerSelected += 1;
+      console.log(gameState.playerSelected);
+    }
+
+    playerAttack();
   } 
   else if (gameState.currentTurn === "enemy") {
-    playerDefend(event);
+
+    gameState.playerDefendRPS = event.target.id.replace("player-", "");
+
+    playerDefend();
   }
 }
 
@@ -289,6 +340,8 @@ export function startBattle() {
   gameState.enemy.currentHP = gameState.enemy.maxHP; // full HP
 
   setupBattleScreen();
+  console.log(gameState.player.passives);
+  renderBuffIcons(gameState.player, "player-buffs");
 
   //Clear battle log
   document.getElementById("battle-log").textContent = "";

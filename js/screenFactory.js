@@ -23,9 +23,7 @@ export function renderAnimalChoices() {
   container.innerHTML = "";
 
   // Randomly pick 3 animals
-  const choices = [...animals]
-    .sort(() => Math.random() - 0.5) // shuffle
-    .slice(0, 3);
+  const choices = [...animals].sort(() => Math.random() - 0.5).slice(0, 3);
 
   // ---- ANIMAL CARD CREATION WITH BOOTSTRAP ----
   const row = document.createElement("div");
@@ -105,8 +103,8 @@ export function renderPowerChoices() {
   const container = document.getElementById("power-options");
   container.innerHTML = ""; // Clear previous cards
 
-  // Pick 2 power cards to display
-  const choices = [...powerCards].slice(0, 2);
+  // Randomly pick 3 power cards to display
+  const choices = [...powerCards].sort(() => Math.random() - 0.5).slice(0, 3);
 
   choices.forEach(power => {
     const col = document.createElement("div");
@@ -139,6 +137,7 @@ export function renderPowerChoices() {
     //Click action
     card.addEventListener("click", () => {
       gameState.player.activePowers.push(power);
+      renderBuffIcons(gameState.player, "player-buffs");
       console.log("Selected power:", power);
       showScreen("battle-screen");
       endRound();
@@ -211,6 +210,34 @@ export function changeEnemyTurnUI() {
   document.getElementById('player-turn').classList.remove('shadow-lg');
   document.getElementById('player-turn').classList.remove('bg-primary');
   document.getElementById('player-turn').classList.add('bg-secondary');
+}
+
+export function renderBuffIcons(entity, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  if (!entity) return;
+
+  // Combine all buffs: passive + active + random
+  const allBuffs = [
+    ...(entity.activePowers || []),
+    ...(entity.randomBuffs || [])
+  ];
+
+  allBuffs.forEach(buff => {
+    if (!buff.color) return;
+
+    const buffEl = document.createElement("div");
+    buffEl.classList.add("buff-icon");
+    buffEl.style.backgroundColor = buff.color;
+    buffEl.title = `${buff.name} - ${buff.desciption}`;
+
+    container.appendChild(buffEl);
+
+    console.log(buff.color);
+  });
+
+  
 }
 
 

@@ -294,15 +294,26 @@ export const buffHooks = [
     id: 4,
     name: "Scissors Aggressor",
     hook: "onScissorsAttack"
+  },
+  {
+    id: 5,
+    name: "Sharp Edge",
+    hook: "modifyCritChance"
+  },
+  {
+    id: 6,
+    name: "Keen Edge",
+    hook: "modifyCritDmg"
   }
 ]
 
-export const randomBuff = [
+export const randomEnemyBuff = [
   { 
     id: 1,
     name: "Increase Damage",
     description: "Increases damage by 5",
     type: "attack",
+    color: "#800000",
     onAttack(player, damage) {
       return damage + 5;
     }
@@ -312,8 +323,9 @@ export const randomBuff = [
     name: "Rock Aggressor",
     description: "Rock deals more damage this round",
     type: "attack",
+    color: "#800000",
     onRockAttack(player, damage) {
-      if (gameState.playerRPS === "rock"){
+      if (gameState.enemyRPS === "rock"){
         return damage + 5;
       }
     }
@@ -323,8 +335,9 @@ export const randomBuff = [
     name: "Scissors Aggressor",
     description: "Scissors deals more damage this round",
     type: "attack",
+    color: "#800000",
     onScissorsAttack(player, damage) {
-      if (gameState.playerRPS === "scissors"){
+      if (gameState.enemyRPS === "scissors"){
         return damage + 5;
       }
     }
@@ -334,8 +347,78 @@ export const randomBuff = [
     name: "Paper Aggressor",
     description: "Scissors deals more damage this round",
     type: "attack",
+    color: "#800000",
     onPaperAttack(player, damage) {
-      if (gameState.playerRPS === "paper"){
+      if (gameState.enemyRPS === "paper"){
+        return damage + 5;
+      }
+    }
+  },
+  {
+    id: 5,
+    name: "Sharp Edge",
+    description: "Increases critical chance by 25%",
+    type: "attack",
+    color: "#FDDC5C",
+    modifyCritChance(player, chance) {
+      return chance + 0.25;
+    }
+  },
+  {
+    id: 6,
+    name: "Keen Edge",
+    description: "Increases critical damage by 25%",
+    type: "attack",
+    color: "#D3AF37",
+    modifyCritDmg(player, multiplier) {
+      return multiplier + 0.25;
+    }
+  }
+]
+
+export const randomBuff = [
+  { 
+    id: 1,
+    name: "Increase Damage",
+    description: "Increases damage by 5",
+    type: "attack",
+    color: "#800000",
+    onAttack(player, damage) {
+      return damage + 5;
+    }
+  },
+  {
+    id: 2,
+    name: "Rock Aggressor",
+    description: "Rock deals more damage this round",
+    type: "attack",
+    color: "#800000",
+    onRockAttack(player, damage) {
+      if (gameState.playerAttackRPS === "rock"){
+        return damage + 5;
+      }
+    }
+  },
+  {
+    id: 3,
+    name: "Scissors Aggressor",
+    description: "Scissors deals more damage this round",
+    type: "attack",
+    color: "#800000",
+    onScissorsAttack(player, damage) {
+      if (gameState.playerAttackRPS === "scissors"){
+        return damage + 5;
+      }
+    }
+  },
+  {
+    id: 4,
+    name: "Paper Aggressor",
+    description: "Scissors deals more damage this round",
+    type: "attack",
+    color: "#800000",
+    onPaperAttack(player, damage) {
+      if (gameState.playerAttackRPS === "paper"){
         return damage + 5;
       }
     }
@@ -345,6 +428,7 @@ export const randomBuff = [
 export const rarityPassives = {
   Common: {
     description: "Heal 7 HP at the start of each turn",
+    color: "#fff",
     onTurnStart(player) {
       player.currentHP = Math.min(player.currentHP + 7, player.maxHP);
       addBattleLog("Player heals 7 HP!");
@@ -352,6 +436,7 @@ export const rarityPassives = {
   },
   Bronze: {
     description: "Damage rolls are more consistent",
+    color: "#CD7F32",
     onAttack(attacker, damage) {
       const avg = (attacker.dmgMin + attacker.dmgMax) / 2;
       return Math.round((damage + avg) / 2);
@@ -359,6 +444,7 @@ export const rarityPassives = {
   },
   Silver: {
     description: "70% chance to deal +5 damage",
+    color: "#C0C0C0",
     onAttack(attacker, damage) {
       if (Math.random() < 0.7) {
         return damage + 5;
@@ -368,6 +454,7 @@ export const rarityPassives = {
   },
   Gold: {
     description: "First attack each round deals +10 damage",
+    color: "#FFD700",
     onFirstAttack(attacker, damage, gameState) {
       if (!gameState.firstAttackUsed) {
         gameState.firstAttackUsed = true;
@@ -385,6 +472,7 @@ export const powerCards = [
     name: "Increase Damage",
     description: "Increases damage by 5",
     type: "attack",
+    color: "#ff0000",
     onAttack(player, damage) {
       return damage + 5;
     }
@@ -392,11 +480,32 @@ export const powerCards = [
   {
     id: 2,
     name: "Healing Wind",
-    description: "Heals HP by 20 points",
+    description: "Healed HP by 20 points",
     type: "heal",
+    color: "#008000",
     onRoundStart(player) {
       player.currentHP = Math.min(player.currentHP + 20, player.maxHP);
       addBattleLog("Healing Wind heals 20 HP!");
+    }
+  },
+  {
+    id: 3,
+    name: "Sharp Edge",
+    description: "Increases critical chance by 25%",
+    type: "attack",
+    color: "#FDDC5C",
+    modifyCritChance(player, chance) {
+      return chance + 0.25;
+    }
+  },
+  {
+    id: 4,
+    name: "Keen Edge",
+    description: "Increases critical damage by 25%",
+    type: "attack",
+    color: "#D3AF37",
+    modifyCritDmg(player, multiplier) {
+      return multiplier + 0.25;
     }
   }
 ]

@@ -1,7 +1,7 @@
 //Turn related functions
 
-import { updateHP, addBattleLog, setupBattleScreen, showScreen, changeFirstPlayerTurnUI, changePlayerTurnUI, changeEnemyTurnUI } from "./screenFactory.js";
-import { enemyAttack, updateRPSUI, rollBuff } from "./combatFactory.js"
+import { updateHP, addBattleLog, setupBattleScreen, showScreen, changeFirstPlayerTurnUI, changePlayerTurnUI, changeEnemyTurnUI, renderBuffIcons } from "./screenFactory.js";
+import { enemyAttack, updateRPSUI, resetRPSUI, rollBuff } from "./combatFactory.js"
 import { enemies } from "./data.js";
 import { gameState } from "./app.js";
 import { applyPassive, applyPowers } from './engine.js';
@@ -19,6 +19,8 @@ export function onTurnStart() {
     changeEnemyTurnUI();
   }
 
+  renderBuffIcons(gameState.player, "player-buffs");
+
   //Heal 15 HP Passive for Common
   applyPassive(gameState.player, "onTurnStart");
 
@@ -29,6 +31,8 @@ export function startRound() {
 
   gameState.firstAttackUsed = false;
   rollBuff();
+
+  renderBuffIcons(gameState.player, "player-buffs");
 
   if (!gameState.player) return;
   gameState.player.activePowers = gameState.player.activePowers || [];
@@ -70,6 +74,9 @@ export function getRandomEnemyForRound(round) {
   const enemy = {
     ...randomIndex,
     currentHP: randomIndex.maxHP,
+    randomBuffs: [],
+    baseCritChance: 0.1,
+    baseCritMultiplier: 1.5
   };
 
   return enemy;
@@ -77,7 +84,8 @@ export function getRandomEnemyForRound(round) {
 
 export function endTurn() {
   gameState.enemyRPS = null;
-  
+  gameState.playerLastRPS = gameState.playerAttackRPS;
+
   updateRPSUI();
 
   if(gameState.currentTurn === "player"){
@@ -110,12 +118,17 @@ export function endRound() {
   gameState.round++;
 
   gameState.turn = 1;
+  gameState.playerAttackRPS = null;
+  gameState.playerDefendRPS = null;
   gameState.enemyRPS = null;
+  gameState.enemyCurrentDmg = 0;
   gameState.playerBuff = null;
+  gameState.player.randomBuffs = [];
+  gameState.enemy.randomBuffs = [];
 
-  document.querySelectorAll("rps-square").forEach(el => {
-    el.classList.remove("disabled");
-  });
+  renderBuffIcons(gameState.player, "player-buffs");
+  renderBuffIcons(gameState.enemy, "enemy-buffs");
+  resetRPSUI();
 
   gameState.playerLastRPS = null;
   gameState.playerSelected = 0;
@@ -146,14 +159,21 @@ export function endRound() {
 export function gameOver() {
   //Reset game state if needed
   gameState.round = 1;
+  gameState.turn = 1;
   gameState.player = null;
   gameState.enemy = null;
   gameState.firstAttackUsed = false;
   gameState.refreshUsed = false;
   gameState.currentTurn = "player";
-  gameState.playerRPS = null;
+  gameState.playerAttackRPS = null;
+  gameState.playerDefendRPS = null;
   gameState.enemyRPS = null;
+  gameState.playerBuff = null;
+  gameState.enemyBuff = null;
 
+  renderBuffIcons(gameState.player, "player-buffs");
+  renderBuffIcons(gameState.enemy, "enemy-buffs");
+  resetRPSUI();
 
   //Show home screen
   showScreen("start-screen");

@@ -17,14 +17,16 @@ export const gameState = {
   enemy: null,
   playerBuff: null,
   enemyBuff: null,
+  enemyCurrentDmg: 0,
   firstAttackUsed: false,
   refreshUsed: false,
   maxRounds: 6,
   currentTurn: "player",
-  playerRPS: null,
+  playerAttackRPS: null,
+  playerDefendRPS: null,
   playerLastRPS: null,
   enemyRPS: null,
-  playerSelected: 0,
+  playerSelected: 0
 };
 
 /*----------------------------- Event Listeners -----------------------------*/

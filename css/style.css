@@ -210,6 +210,7 @@ body {
   pointer-events: none; /* Prevents all mouse events */
   opacity: 0.5; /* Optional: Visually indicate a disabled state */
   cursor: not-allowed; /* Optional: Change cursor on hover */
+  background-color: #333;
 }
 
 .rps-square.enemy-selected {
@@ -224,6 +225,29 @@ body {
   font-weight: bold;
   align-self: center;
 }
+
+.buff-container {
+  min-height: 24px;
+  gap: 4px;
+}
+
+.buff-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  cursor: default;
+  position: relative;
+}
+
+.buff-icon span {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  font-size: 10px;
+  color: white;
+  font-weight: bold;
+}
+
 
 /* Battle actions */
 .battle-actions {
