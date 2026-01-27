@@ -271,23 +271,24 @@ body {
 ---------------------------------*/
 #power-options {
   display: flex;
-  justify-content: center;
+  justify-content: center; /* centers horizontally */
+  align-items: center;     /* centers vertically if needed */
+  text-align: center;
   gap: 20px;
-  margin-top: 20px;
+  margin: 30px auto;       /* center the container itself */
 }
 
 .power-card {
-  width: 180px;
-  min-height: 200px;
+  cursor: pointer;
+  width: 200px;
+  min-height: 280px;
   padding: 15px;
   border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: center;
   transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  display: inline-block; /* allows horizontal layout */
+  margin: 0 10px;
 }
 
 .power-card:hover {

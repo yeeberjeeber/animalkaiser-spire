@@ -105,10 +105,13 @@ export function renderPowerChoices() {
 
   // Randomly pick 3 power cards to display
   const choices = [...powerCards].sort(() => Math.random() - 0.5).slice(0, 3);
+  
+  const row = document.createElement("div");
+  row.classList.add("row", "justify-content-center", "g-3"); 
 
   choices.forEach(power => {
     const col = document.createElement("div");
-    col.className = "col-md-4 mb-3"; // 3 cards per row with spacing
+    col.classList.add("col-12", "col-md-4");
 
     // Create the card
     const card = document.createElement("div");
@@ -120,8 +123,6 @@ export function renderPowerChoices() {
     if (power.type === "attack") card.classList.add("bg-danger", "text-white");
     else if (power.type === "heal") card.classList.add("bg-success", "text-white");
     else card.classList.add("bg-primary", "text-white"); // default
-
-    card.style.cursor = "pointer"; 
 
     card.innerHTML = `
       <div class="card-body">
@@ -144,8 +145,10 @@ export function renderPowerChoices() {
     });
 
     col.appendChild(card);
-    container.appendChild(col);
+    row.appendChild(col);
   });
+
+  container.appendChild(row);
 }
 
 
