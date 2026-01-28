@@ -44,6 +44,12 @@ document.getElementById("reset-btn").addEventListener("click", () => {
   document.getElementById("generate-btn").disabled = false;
 });
 
+//Home button to go back to main page
+document.getElementById("cancel-btn").addEventListener("click", () => {
+  showScreen("start-screen");
+  refreshUsed = false;
+});
+
 //Refresh animal selections
 document.getElementById("generate-btn").addEventListener("click", () => {
   if (refreshUsed) {

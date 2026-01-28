@@ -117,6 +117,7 @@ export function renderPowerChoices() {
     const card = document.createElement("div");
     card.className = "card text-center shadow";
     card.style.height = "300px";
+    card.classList.add("power-card");
     
 
     // Background color based on type
@@ -260,11 +261,37 @@ export function renderPassives(entity, containerId) {
 }
 
 
-//Enemy Thinking UI
-export function showEnemyThinking() {
-  document.getElementById("enemy-container").classList.add("thinking");
-}
+export function showDamageEffect(targetId, damage) {
+  const container = document.getElementById(targetId);
 
-export function hideEnemyThinking() {
-  document.getElementById("enemy-container").classList.remove("thinking");
+  const dmgDiv = document.createElement("div");
+  dmgDiv.classList.add("damage-effect");
+  dmgDiv.textContent = `-${damage}`;
+  
+  // Style the damage number
+  Object.assign(dmgDiv.style, {
+    position: "absolute",
+    top: "0px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    color: "red",
+    fontWeight: "bold",
+    fontSize: "20px",
+    opacity: 1,
+    pointerEvents: "none",
+    transition: "all 0.8s ease-out",
+  });
+
+  container.appendChild(dmgDiv);
+
+  // Animate: float up and fade
+  setTimeout(() => {
+    dmgDiv.style.top = "-30px";
+    dmgDiv.style.opacity = 0;
+  }, 50); // slight delay to trigger CSS transition
+
+  // Remove after animation
+  setTimeout(() => {
+    container.removeChild(dmgDiv);
+  }, 850);
 }

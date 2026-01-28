@@ -75,7 +75,8 @@ export function getRandomEnemyForRound(round) {
     currentHP: randomIndex.maxHP,
     randomBuffs: [],
     baseCritChance: 0.1,
-    baseCritMultiplier: 1.5
+    baseCritMultiplier: 1.5,
+    spriteOffsetX: 0
   };
 
   return enemy;
@@ -176,5 +177,5 @@ export function gameOver() {
   resetRPSUI();
 
   //Show home screen
-  showScreen("start-screen");
+  showScreen("end-screen");
 }

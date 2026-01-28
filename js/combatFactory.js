@@ -1,7 +1,7 @@
 //Combat Function js file
 
 import { rarityPassives, randomBuff, randomEnemyBuff, buffHooks } from './data.js';
-import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog, drawSprite, showEnemyThinking, hideEnemyThinking, renderBuffIcons, renderPassives } from './screenFactory.js';
+import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog, drawSprite, renderBuffIcons, renderPassives, showDamageEffect } from './screenFactory.js';
 import { onTurnStart, startRound, getRandomEnemyForRound, endTurn, gameOver} from './turnFactory.js';
 import { gameState, choices } from "./app.js";
 import { applyPassive, applyPowers, applyBuff } from './engine.js';
@@ -178,7 +178,8 @@ export function createPlayer(animal) {
       randomBuffs: [],
       baseCritChance: 0.1,
       baseCritMultiplier: 1.5,
-      sprite: animal.sprite
+      sprite: animal.sprite,
+      spriteOffsetX: 0
     };
 }
 
@@ -223,6 +224,8 @@ export function playerDefend() {
     addBattleLog(`${gameState.enemy.name} hits ${gameState.player.name} for ${damage} damage!`);
     updateHP();
 
+    showDamageEffect("player-damage-container", damage);
+
     setTimeout(() => {
       drawSprite(gameState.player, "idle", "player-canvas");
       
@@ -230,7 +233,9 @@ export function playerDefend() {
 
     if (gameState.player.currentHP <= 0) {
       addBattleLog(`${gameState.player.name} is defeated!`);
-      gameOver();
+      setTimeout(() => {
+        gameOver();
+      }, 2000);
       return;
     }
 
@@ -285,6 +290,8 @@ export function playerAttack() {
       addBattleLog(`${gameState.player.name} hits ${gameState.enemy.name} for ${damage} damage!`);
       updateHP();
 
+      showDamageEffect("enemy-damage-container", damage);
+
       setTimeout(() => {
         drawSprite(gameState.player, "idle", "player-canvas");
         drawSprite(gameState.enemy, "idle", "enemy-canvas");
@@ -292,7 +299,9 @@ export function playerAttack() {
 
       if (gameState.enemy.currentHP <= 0) {
         addBattleLog(`${gameState.enemy.name} is defeated!`);
-        showScreen("power-selection-screen");
+        setTimeout(() => {
+          showScreen("power-selection-screen");
+        }, 2000);
         renderPowerChoices();
         return;
       }
