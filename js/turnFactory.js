@@ -1,6 +1,6 @@
 //Turn related functions
 
-import { updateHP, addBattleLog, setupBattleScreen, showScreen, changeFirstPlayerTurnUI, changePlayerTurnUI, changeEnemyTurnUI, renderBuffIcons } from "./screenFactory.js";
+import { updateHP, addBattleLog, setupBattleScreen, showScreen, changeFirstPlayerTurnUI, changePlayerTurnUI, changeEnemyTurnUI, renderBuffIcons, renderPassives } from "./screenFactory.js";
 import { enemyAttack, updateRPSUI, resetRPSUI, rollBuff } from "./combatFactory.js"
 import { enemies } from "./data.js";
 import { gameState } from "./app.js";
@@ -18,8 +18,7 @@ export function onTurnStart() {
   } else {
     changeEnemyTurnUI();
   }
-
-  renderBuffIcons(gameState.player, "player-buffs");
+  
 
   //Heal 15 HP Passive for Common
   applyPassive(gameState.player, "onTurnStart");
@@ -171,6 +170,7 @@ export function gameOver() {
   gameState.playerBuff = null;
   gameState.enemyBuff = null;
 
+  renderPassives(gameState.player, "player-buffs");  
   renderBuffIcons(gameState.player, "player-buffs");
   renderBuffIcons(gameState.enemy, "enemy-buffs");
   resetRPSUI();

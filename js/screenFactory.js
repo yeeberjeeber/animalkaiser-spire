@@ -138,6 +138,7 @@ export function renderPowerChoices() {
     //Click action
     card.addEventListener("click", () => {
       gameState.player.activePowers.push(power);
+      renderPassives(gameState.player, "player-buffs");
       renderBuffIcons(gameState.player, "player-buffs");
       console.log("Selected power:", power);
       showScreen("battle-screen");
@@ -217,7 +218,8 @@ export function changeEnemyTurnUI() {
 
 export function renderBuffIcons(entity, containerId) {
   const container = document.getElementById(containerId);
-  container.innerHTML = "";
+  const buffWrapper = container.querySelector(".buff-wrapper");
+  buffWrapper.innerHTML = "";
 
   if (!entity) return;
 
@@ -235,12 +237,26 @@ export function renderBuffIcons(entity, containerId) {
     buffEl.style.backgroundColor = buff.color;
     buffEl.title = `${buff.name} - ${buff.desciption}`;
 
-    container.appendChild(buffEl);
+    buffWrapper.appendChild(buffEl);
 
     console.log(buff.color);
   });
+}
 
-  
+export function renderPassives(entity, containerId) {
+  const container = document.getElementById(containerId);
+  const passiveWrapper = container.querySelector(".passive-wrapper");
+  passiveWrapper.innerHTML = "";
+
+  if (!entity) return;
+
+  const icon = document.createElement("div");
+  icon.classList.add("buff-icon");
+  icon.style.backgroundColor = entity.passives.color;
+  icon.title = entity.passives.description;
+
+  passiveWrapper.appendChild(icon);
+  console.log(entity.passives.color);
 }
 
 

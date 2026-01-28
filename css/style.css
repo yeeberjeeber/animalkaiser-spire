@@ -231,6 +231,12 @@ body {
   gap: 4px;
 }
 
+.buff-wrapper, .passive-wrapper {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
 .buff-icon {
   width: 20px;
   height: 20px;
@@ -246,6 +252,13 @@ body {
   font-size: 10px;
   color: white;
   font-weight: bold;
+}
+
+.passive-wrapper .buff-icon {
+  border: 2px solid gold;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
+  width: 24px;
+  height: 24px;
 }
 
 

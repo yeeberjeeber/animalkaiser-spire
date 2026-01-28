@@ -82,7 +82,10 @@
         <div class="col-md-4 text-center combatant" id="player-container">
             <h3 id="player-name">Player</h3>
             <canvas id="player-canvas" width="64" height="64"></canvas>
-            <div class="buff-container d-flex justify-content-start gap-1 mb-1" id="player-buffs"></div>
+            <div class="buff-container d-flex justify-content-start gap-1 mb-1" id="player-buffs">
+                <div class="passive-wrapper"></div> 
+                <div class="buff-wrapper d-flex gap-1"></div> 
+            </div>
             <div class="progress mb-2">
             <div id="player-hp-bar" class="progress-bar bg-success" role="progressbar" style="width: 100%;"></div>
             </div>
@@ -104,7 +107,10 @@
         <div class="col-md-4 text-center combatant" id="enemy-container">
             <h3 id="enemy-name">Enemy</h3>
             <canvas id="enemy-canvas" width="64" height="64"></canvas>
-            <div class="buff-container d-flex justify-content-start gap-1 mb-1" id="enemy-buffs"></div>
+            <div class="buff-container d-flex justify-content-start gap-1 mb-1" id="enemy-buffs">
+                <div class="passive-wrapper"></div> 
+                <div class="buff-wrapper d-flex gap-1"></div>
+            </div>
             <div class="progress mb-2">
             <div id="enemy-hp-bar" class="progress-bar bg-danger" role="progressbar" style="width: 100%;"></div>
             </div>

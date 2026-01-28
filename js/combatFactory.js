@@ -1,7 +1,7 @@
 //Combat Function js file
 
 import { rarityPassives, randomBuff, randomEnemyBuff, buffHooks } from './data.js';
-import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog, drawSprite, showEnemyThinking, hideEnemyThinking, renderBuffIcons } from './screenFactory.js';
+import { setupBattleScreen, updateHP, showScreen, renderPowerChoices, addBattleLog, drawSprite, showEnemyThinking, hideEnemyThinking, renderBuffIcons, renderPassives } from './screenFactory.js';
 import { onTurnStart, startRound, getRandomEnemyForRound, endTurn, gameOver} from './turnFactory.js';
 import { gameState, choices } from "./app.js";
 import { applyPassive, applyPowers, applyBuff } from './engine.js';
@@ -76,6 +76,28 @@ function rollEnemyRPS() {
   return choices[Math.floor(Math.random() * choices.length)];
 } 
 
+//Playing the animation for enemy roll
+function animateEnemyChoice(duration = 1000, interval = 100, callback) {
+  let elapsed = 0;
+  const rollInterval = setInterval(() => {
+    // Pick a temporary random choice to show
+    const tempChoice = choices[Math.floor(Math.random() * choices.length)];
+    gameState.enemyRPS = tempChoice;
+    updateRPSUI();
+
+    elapsed += interval;
+    if (elapsed >= duration) {
+      clearInterval(rollInterval);
+
+      // After rolling, pick final choice (can be random or strategic)
+      gameState.enemyRPS = rollEnemyRPS();
+      updateRPSUI();
+
+      if (callback) callback();
+    }
+  }, interval);
+}
+
 //Highlight the selected box
 export function updateRPSUI() {
 
@@ -105,10 +127,6 @@ export function updateRPSUI() {
     if (el.id === `player-${gameState.playerAttackRPS}` && allDisabled) {
       el.classList.add("disabled");
       gameState.playerSelected = 0;
-
-      //apply enemy buffs
-      setEnemyBuff(gameState.enemy);
-      renderBuffIcons(gameState.enemy, "enemy-buffs");
 
       const shuffled = [...playerSquares].sort(() => Math.random() - 0.5);
 
@@ -165,7 +183,7 @@ export function createPlayer(animal) {
 }
 
 /* ATTACK FUNCTIONS */
-// //Enemy attack calculation
+//Enemy attack calculation
 export function enemyAttack() {
 
   gameState.enemyRPS = rollEnemyRPS();
@@ -181,6 +199,7 @@ export function enemyAttack() {
   console.log(gameState.enemyRPS);
 }
 
+//Calls when enemy selects RPS choice
 export function playerDefend() {
   if (gameState.currentTurn !== "enemy") return;
 
@@ -211,14 +230,19 @@ export function playerDefend() {
 
     if (gameState.player.currentHP <= 0) {
       addBattleLog(`${gameState.player.name} is defeated!`);
-      setTimeout(gameOver, 500);
+      gameOver();
       return;
     }
 
-    endTurn();
+    setTimeout(() => {
+        endTurn();
+      }, 500);
+
   } else {
 
-    endTurn();
+    setTimeout(() => {
+        endTurn();
+      }, 500);
 
   }
 
@@ -227,71 +251,63 @@ export function playerDefend() {
 //Player attack calculation
 export function playerAttack() {
 
-  gameState.enemyRPS = rollEnemyRPS();
-
-  updateRPSUI();
-  
-  setTimeout(600);
-
-  console.log(gameState.playerAttackRPS);
-  console.log(gameState.enemyRPS);
-  console.log(`Player last selected: ${gameState.playerLastRPS}`);
-  
-
   drawSprite(gameState.player, "attack", "player-canvas");
 
-  const outcome = resolveRPS(gameState.playerAttackRPS, gameState.enemyRPS);
-
-  if (outcome === "win") {
-
-    drawSprite(gameState.enemy, "hurt", "enemy-canvas");
-
-    let damage = rollDamage(gameState.player);
-
-    console.log(gameState.playerBuff);
-
-    damage = applyBuff(gameState.player, gameState.playerBuff, damage);
-
-   // Bronze & Silver passive
-    damage = applyPassive(gameState.player, "onAttack", damage);
-
-    // Gold passive
-    damage = applyPassive(gameState.player, "onFirstAttack", damage, gameState);
-
-    //Apply damage power if any
-    damage = applyPowers(gameState.player, "onAttack", damage);
-
-    gameState.enemy.currentHP -= damage;
-    if (gameState.enemy.currentHP < 0) gameState.enemy.currentHP = 0;
-
-    addBattleLog(`${gameState.player.name} hits ${gameState.enemy.name} for ${damage} damage!`);
-    updateHP();
-
-    setTimeout(() => {
-      drawSprite(gameState.player, "idle", "player-canvas");
-      drawSprite(gameState.enemy, "idle", "enemy-canvas");
-    }, 300);
-
-    if (gameState.enemy.currentHP <= 0) {
-      addBattleLog(`${gameState.enemy.name} is defeated!`);
-      setTimeout(() => {
-        showScreen("power-selection-screen");
-      }, 500);
-      renderPowerChoices();
-      return;
-    }
-
-    setTimeout(600);
-    endTurn();
-
-  } else  {
-
-    drawSprite(gameState.player, "idle", "player-canvas");
-    setTimeout(600);
-    endTurn();
-
-  }
+  animateEnemyChoice(1200, 150, () => {
+    console.log(gameState.playerAttackRPS);
+    console.log(gameState.enemyRPS);
+    console.log(`Player last selected: ${gameState.playerLastRPS}`);
   
+    const outcome = resolveRPS(gameState.playerAttackRPS, gameState.enemyRPS);
+
+    if (outcome === "win") {
+
+      drawSprite(gameState.enemy, "hurt", "enemy-canvas");
+
+      let damage = rollDamage(gameState.player);
+
+      console.log(gameState.playerBuff);
+
+      damage = applyBuff(gameState.player, gameState.playerBuff, damage);
+
+      // Bronze & Silver passive
+      damage = applyPassive(gameState.player, "onAttack", damage);
+
+      // Gold passive
+      damage = applyPassive(gameState.player, "onFirstAttack", damage, gameState);
+
+      //Apply damage power if any
+      damage = applyPowers(gameState.player, "onAttack", damage);
+
+      gameState.enemy.currentHP -= damage;
+      if (gameState.enemy.currentHP < 0) gameState.enemy.currentHP = 0;
+
+      addBattleLog(`${gameState.player.name} hits ${gameState.enemy.name} for ${damage} damage!`);
+      updateHP();
+
+      setTimeout(() => {
+        drawSprite(gameState.player, "idle", "player-canvas");
+        drawSprite(gameState.enemy, "idle", "enemy-canvas");
+      }, 300);
+
+      if (gameState.enemy.currentHP <= 0) {
+        addBattleLog(`${gameState.enemy.name} is defeated!`);
+        showScreen("power-selection-screen");
+        renderPowerChoices();
+        return;
+      }
+
+      setTimeout(() => {
+        endTurn();
+      }, 500);
+    
+    } else  {
+      drawSprite(gameState.player, "idle", "player-canvas");
+      setTimeout(() => {
+        endTurn();
+      }, 500);
+    }
+  });
 }
 
 //Attacking and Defending
@@ -341,6 +357,7 @@ export function startBattle() {
 
   setupBattleScreen();
   console.log(gameState.player.passives);
+  renderPassives(gameState.player, "player-buffs");
   renderBuffIcons(gameState.player, "player-buffs");
 
   //Clear battle log

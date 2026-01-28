@@ -466,6 +466,7 @@ export const rarityPassives = {
   }
 }
 
+
 export const powerCards = [
   {
     id: 1,
