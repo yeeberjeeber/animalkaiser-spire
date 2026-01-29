@@ -140,13 +140,6 @@ export function endRound() {
 
   startRound();
 
-  if (gameState.round > gameState.maxRounds) {
-    addBattleLog("Congratulations! You completed the game!");
-    //Show a victory screen
-    showScreen("victory-screen");
-    return;
-  }
-
   //Generate next enemy for the new round
   gameState.enemy = getRandomEnemyForRound(gameState.round);
 

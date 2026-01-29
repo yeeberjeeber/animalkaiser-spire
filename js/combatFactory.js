@@ -297,13 +297,23 @@ export function playerAttack() {
         drawSprite(gameState.enemy, "idle", "enemy-canvas");
       }, 300);
 
-      if (gameState.enemy.currentHP <= 0) {
+      if (gameState.enemy.currentHP <= 0 && gameState.round < gameState.maxRounds) {
+
         addBattleLog(`${gameState.enemy.name} is defeated!`);
         setTimeout(() => {
           showScreen("power-selection-screen");
         }, 2000);
         renderPowerChoices();
         return;
+
+      } else if (gameState.enemy.currentHP <= 0 && gameState.round > gameState.maxRounds) {
+ 
+        setTimeout(() => {
+          addBattleLog("Congratulations! You completed the game!");
+          showScreen("victory-screen");
+        }, 2000);
+        return;
+
       }
 
       setTimeout(() => {
