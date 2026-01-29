@@ -14,22 +14,29 @@ The reason why I chose to do this was because I had recalled an earlier lesson m
 
 <img width="897" height="685" alt="image" src="https://github.com/user-attachments/assets/1ed287eb-6f8a-49e3-afc9-76775131d0f2" />
 
+
 2. Select your choice between Rock, Paper and Scissors
 
 <img width="890" height="677" alt="image" src="https://github.com/user-attachments/assets/9b567d83-08f8-4928-9c2a-751cd63e62c8" />
+
 
 3. Do keep in mind, choosing the same choice too much will not be beneficial!
 
 <img width="903" height="680" alt="image" src="https://github.com/user-attachments/assets/b0a9d9c7-fe01-4118-bd86-923889b89205" />
 
+
 4. Do your best to stay alive till Round 6!
 
 <img width="897" height="673" alt="image" src="https://github.com/user-attachments/assets/678364ba-d021-447d-b8fa-137eaad18eba" />
+
 
 5. Do that, and victory is yours!
 
 <img width="887" height="669" alt="image" src="https://github.com/user-attachments/assets/b5162b13-31aa-4dd7-8f06-2ca4492f8fbb" />
 
+
 6. Else, try again!
 
 <img width="894" height="676" alt="image" src="https://github.com/user-attachments/assets/9c22ce60-f37b-4777-974c-90452df0536f" />
+
+# 
