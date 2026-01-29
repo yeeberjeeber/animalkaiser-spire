@@ -8,6 +8,10 @@ Game Designed and Built for General Assembly Unit 1 Project 1
 This game is inspired by an arcade game that I played in my youth - "Animalkaiser", along with another game that I had recently played - "Slay the Spire".
 The reason why I chose to do this was because I had recalled an earlier lesson module done on Rock-Paper-Scissors game, noticing that the arcade game had a similar mechanic, I decided to add my spin on it with some elements from the game "Slay the Spire".
 
+Planning materials: https://docs.google.com/document/d/1KUOkvXU1O5S62Rz4n8OOty6-3j1D74itoF45AGOBiz0/edit?usp=sharing
+
+Deployed link: https://yeeberjeeber.github.io/animalkaiser-spire/
+
 # How to Play
 
 1. Choose Your Fighter (Animals are randomly generated from a stack of 20)
