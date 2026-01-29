@@ -50,3 +50,11 @@ Animal sprites: https://finalbossblues.itch.io/animals-2
 # Technologies Used
 
 Javascript, HTML, CSS , Bootstrap, Lottie (for animated background)
+
+# Next Steps
+
+1. Potentially add damage effects / smoother screen transitions
+
+2. More rounds / enemy types
+
+3. More buff bonuses (maybe even debuffs)
