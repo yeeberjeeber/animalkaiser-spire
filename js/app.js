@@ -1,6 +1,7 @@
 /*-------------------------------- Imports --------------------------------*/
 import { showScreen, renderAnimalChoices } from "./screenFactory.js";
 import { onPlayerRPSClick } from "./combatFactory.js";
+import { gameOver } from "./turnFactory.js";
 
 /*---------------------------- Variables (state) ----------------------------*/
 
@@ -46,8 +47,14 @@ document.getElementById("reset-btn").addEventListener("click", () => {
 
 //Home button to go back to main page
 document.getElementById("cancel-btn").addEventListener("click", () => {
+  gameOver();
   showScreen("start-screen");
-  refreshUsed = false;
+});
+
+//Play again button to go to animal selection screen
+document.getElementById("restart-btn").addEventListener("click", () => {
+  gameOver();
+  showScreen("animal-selection-screen");
 });
 
 //Refresh animal selections

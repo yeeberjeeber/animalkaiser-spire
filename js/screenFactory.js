@@ -224,7 +224,6 @@ export function renderBuffIcons(entity, containerId) {
 
   if (!entity) return;
 
-  // Combine all buffs: passive + active + random
   const allBuffs = [
     ...(entity.activePowers || []),
     ...(entity.randomBuffs || [])
@@ -233,14 +232,16 @@ export function renderBuffIcons(entity, containerId) {
   allBuffs.forEach(buff => {
     if (!buff.color) return;
 
+    if (buff.color === "#008000") {
+      return;
+    }
+    
     const buffEl = document.createElement("div");
     buffEl.classList.add("buff-icon");
     buffEl.style.backgroundColor = buff.color;
-    buffEl.title = `${buff.name} - ${buff.desciption}`;
+    buffEl.title = `${buff.name} - ${buff.description}`;
 
     buffWrapper.appendChild(buffEl);
-
-    console.log(buff.color);
   });
 }
 

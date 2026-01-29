@@ -47,7 +47,18 @@ lottie.loadAnimation({
   container: document.getElementById('lottie-bgd'),
   renderer: 'svg',
   loop: false,            // no loop
-  autoplay: true,        // start automatically
+  autoplay: false,        // start automatically
+  path: './animation/sunrise.json',  // path to Lottie JSON
+  rendererSettings: {
+    preserveAspectRatio: 'xMidYMid slice' // this makes it cover entire container
+  }
+});
+
+lottie.loadAnimation({
+  container: document.getElementById('lottie-bge'),
+  renderer: 'svg',
+  loop: false,            // no loop
+  autoplay: false,        // start automatically
   path: './animation/sunrise.json',  // path to Lottie JSON
   rendererSettings: {
     preserveAspectRatio: 'xMidYMid slice' // this makes it cover entire container

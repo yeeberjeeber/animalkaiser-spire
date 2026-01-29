@@ -40,7 +40,7 @@ export const animals = [
     },
     {
       id: 3, 
-      name: "Great White Shark", 
+      name: "Shark", 
       maxHP: 110, 
       dmgMin: 20, 
       dmgMax: 27, 
@@ -345,7 +345,7 @@ export const randomEnemyBuff = [
   {
     id: 4,
     name: "Paper Aggressor",
-    description: "Scissors deals more damage this round",
+    description: "Paper deals more damage this round",
     type: "attack",
     color: "#800000",
     onPaperAttack(player, damage) {
@@ -414,7 +414,7 @@ export const randomBuff = [
   {
     id: 4,
     name: "Paper Aggressor",
-    description: "Scissors deals more damage this round",
+    description: "Paper deals more damage this round",
     type: "attack",
     color: "#800000",
     onPaperAttack(player, damage) {

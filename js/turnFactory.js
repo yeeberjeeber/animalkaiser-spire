@@ -22,6 +22,7 @@ export function onTurnStart() {
 
   //Heal 15 HP Passive for Common
   applyPassive(gameState.player, "onTurnStart");
+  renderBuffIcons(gameState.player, "player-buffs");
 
   updateHP();
 }

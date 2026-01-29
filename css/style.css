@@ -269,6 +269,7 @@ body {
   background-color: rgba(255, 255, 255, 1);
   z-index: 0;
   border-radius: 12px;
+  padding: 12px;
 }
 
 #player-name {
@@ -279,6 +280,8 @@ body {
   margin-bottom: 30px;
   text-align: center;
   white-space: nowrap;
+  letter-spacing: -0.5px;
+  transform: scaleX(0.9)
 }
 
 #enemy-container {
@@ -286,6 +289,7 @@ body {
   z-index: 0;
   pointer-events: none;
   border-radius: 12px;
+  padding: 12px;
 }
 
 #enemy-name {
@@ -296,6 +300,8 @@ body {
   margin-bottom: 30px;
   text-align: center;
   white-space: nowrap;
+  letter-spacing: -0.5px;
+  transform: scaleX(0.9)
 }
 
 #player-turn, #enemy-turn {
@@ -488,6 +494,8 @@ body {
 #end-screen {
   text-align: center;
   margin-top: 50px;
+  display: flex;
+  align-items: center;
 }
 
 #end-title {
@@ -495,6 +503,7 @@ body {
   -webkit-text-stroke: 2px #333;
   text-transform: uppercase;
   font-weight: bold;
+  font-size: 64px;
   text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
   color: white;
   margin-bottom: 30px;
@@ -533,6 +542,64 @@ body {
 }
 
 #cancel-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+/* -------------------------------
+  VICTORY SCREEN
+---------------------------------*/
+#victory-screen {
+  text-align: center;
+  margin-top: 50px;
+  display: flex;
+  align-items: center;
+}
+
+#victory-title {
+  font-family: "Anton", sans-serif;
+  -webkit-text-stroke: 2px #333;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 64px;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+  color: white;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+#play-again-btn {
+  font-family: 'Anton', sans-serif;
+  -webkit-text-stroke: 2px #333;
+  text-transform: uppercase;
+  font-size: 24px;
+  padding: 15px 40px;
+}
+
+#play-again-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+#play-again-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+#home-btn {
+  font-family: 'Anton', sans-serif;
+  -webkit-text-stroke: 2px #333;
+  text-transform: uppercase;
+  font-size: 24px;
+  padding: 15px 40px;
+}
+
+#home-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+#home-btn:active {
   transform: translateY(1px);
   box-shadow: 0 3px 10px rgba(0,0,0,0.3);
 }
