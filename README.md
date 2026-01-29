@@ -39,4 +39,14 @@ The reason why I chose to do this was because I had recalled an earlier lesson m
 
 <img width="894" height="676" alt="image" src="https://github.com/user-attachments/assets/9c22ce60-f37b-4777-974c-90452df0536f" />
 
-# 
+# Attributions
+
+Initial screen background: https://lottiefiles.com/free-animation/forest-morning-S61W0oEBQh
+
+Normal screen background: https://app.lottiefiles.com/animation/f232aeb1-4a09-421e-a426-9e89e9d2f741?panel=download
+
+Animal sprites: https://finalbossblues.itch.io/animals-2
+
+# Technologies Used
+
+Javascript, HTML, CSS , Bootstrap, Lottie (for animated background)
