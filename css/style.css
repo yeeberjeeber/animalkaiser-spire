@@ -327,6 +327,10 @@ body {
   transform: scaleX(0.9)
 }
 
+#enemy-buffs {
+  pointer-events: auto;
+}
+
 #player-turn, #enemy-turn {
   font-size: 1.2rem;
   font-weight: bold;
